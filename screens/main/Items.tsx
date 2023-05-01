@@ -6,19 +6,28 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
 import {colors} from '../../constants/colors';
 import {ScreenProps} from '../../constants/types';
 import {GlobalStyles} from '../../styles/global';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllPostsApi} from '../../redux/actions/post.actions';
+import {BASE_URL} from '../../utils/apiMethods';
 
 //@ts-ignore
 const Items = ({navigation}: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const {editList} = useSelector((state: any) => state.posts);
+  const {token} = useSelector(({auth}: any) => auth);
   useEffect(() => {
-    console.log('Navigation', navigation);
-  }, [navigation]);
+    //@ts-ignore
+    dispatch(getAllPostsApi(token));
+  }, [token]);
+
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Publications'} navigation={navigation} />
@@ -37,24 +46,29 @@ const Items = ({navigation}: ScreenProps) => {
           family="Feather"
           placeholder="Recherche"
         />
-        <ScrollView style={styles.scrollContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('details');
-            }}>
-            <Card
-              flex
-              borderless
-              style={styles.card}
-              title="Christopher Moon"
-              caption="139 minutes ago"
-              location="Los Angeles, CA"
-              avatar="http://i.pravatar.cc/100?id=skater"
-              imageStyle={styles.cardImageRadius}
-              image="https://images.unsplash.com/photo-1497802176320-541c8e8de98d?&w=1600&h=900&fit=crop&crop=entropy&q=300"
-            />
-          </TouchableOpacity>
-        </ScrollView>
+
+        <FlatList
+          style={styles.scrollContainer}
+          data={editList}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('details');
+              }}>
+              <Card
+                flex
+                borderless
+                style={styles.card}
+                title={item.title}
+                caption={`${item.createdBy.firstName} ${item.createdBy.lastName}`}
+                location={item.createdBy.address}
+                avatar="http://i.pravatar.cc/100?id=skater"
+                imageStyle={styles.cardImageRadius}
+                image={`${BASE_URL}/${item.photos[0]}`}
+              />
+            </TouchableOpacity>
+          )}
+        />
 
         <Button
           onlyIcon

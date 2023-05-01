@@ -1,14 +1,16 @@
-import {Picker} from '@react-native-picker/picker';
-import {Button, Input, Text} from 'galio-framework';
-import React, {useState} from 'react';
-import {Modal, StyleSheet, View} from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {useSelector} from 'react-redux';
-import {colors} from '../constants/colors';
-import {ModalProps} from '../constants/types';
-import {GlobalStyles} from '../styles/global';
-const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
-  const {editList} = useSelector((state: any) => state.category);
+import { Picker } from '@react-native-picker/picker';
+import { Button, Input, Text } from 'galio-framework';
+import React, { useMemo, useState } from 'react';
+import { Modal, StyleSheet, View } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { useDispatch, useSelector } from 'react-redux';
+import { colors } from '../constants/colors';
+import { ModalProps } from '../constants/types';
+import { GlobalStyles } from '../styles/global';
+import { createPostApi } from '../redux/actions/post.actions';
+const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
+  const { editList } = useSelector((state: any) => state.category);
+  const { token } = useSelector(({ auth }: any) => auth);
   const [libraryImageList, setImageLibraryList] = useState<any[]>([]);
   const [cameraImageList, setCameraImageList] = useState<any[]>([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('-1');
@@ -16,6 +18,11 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  useMemo(() => {
+    console.log("Selected Category", selectedCategory);
+    console.log("Sub Category", selectedSubCategory)
+  }, [selectedCategory, selectedSubCategory])
+  const dispatch = useDispatch();
   const handleConfirm = () => {
     const mappedImages = [
       ...cameraImageList.map(img => ({
@@ -37,7 +44,11 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
     mappedImages.forEach(img => {
       formData.append('photos', img);
     });
+    //@ts-ignore
+    dispatch(createPostApi(token, formData));
+    handleClose(); 
   };
+
   return (
     <>
       <Modal
@@ -99,7 +110,7 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
             />
             <View style={styles.categoryInput}>
               <Picker
-                style={{width: '100%', height: 30}}
+                style={{ width: '100%', height: 30 }}
                 selectedValue={selectedCategory}
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedCategory(itemValue);
@@ -120,7 +131,7 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
             </View>
             <View style={styles.categoryInput}>
               <Picker
-                style={{width: '100%', height: 30}}
+                style={{ width: '100%', height: 30 }}
                 selectedValue={selectedSubCategory}
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedSubCategory(itemValue);

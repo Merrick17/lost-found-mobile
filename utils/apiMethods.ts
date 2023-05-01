@@ -6,7 +6,9 @@ const postApi = async (url:string, body:any, config = {}) => {
   try {
     const { data } = await axios.post(`${BASE_URL}/${url}`, body, config);
     return data;
-  } catch (error) {}
+  } catch (error:any) {
+    console.log("Post Error",error.message)
+  }
 };
 
 const getApi = async (url:string, config = {}) => {
