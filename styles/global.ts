@@ -18,7 +18,8 @@ const GlobalStyles = StyleSheet.create({
     },
     inputStyle: {
         borderColor: colors.background,
-        backgroundColor: colors.input
+        backgroundColor: colors.input,
+        zIndex: 1000, // set higher zIndex
     },
     mainBtnStyles: {
         width: "100%",

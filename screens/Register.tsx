@@ -11,6 +11,8 @@ import { colors } from '../constants/colors';
 import { GlobalStyles } from '../styles/global';
 import { ScreenProps } from '../constants/types';
 import { Controller, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux'
+import { createUserApi } from '../redux/actions/user.actions';
 const Register = ({ navigation }: ScreenProps) => {
     const {
         control,
@@ -26,7 +28,12 @@ const Register = ({ navigation }: ScreenProps) => {
             phoneNumber: '',
         },
     });
-    const onSubmit = (data: any) => console.log('Daata', data);
+    const dispatch = useDispatch();
+    const onSubmit = (data: any) => {
+        console.log('Daata', data);
+        //@ts-ignore
+        dispatch(createUserApi(data))
+    }
     const handleLogin = () => {
         navigation.pop();
     };
@@ -141,7 +148,7 @@ const Register = ({ navigation }: ScreenProps) => {
                     color={colors.main}
                     shadowless
                     style={GlobalStyles.mainBtnStyles}>
-                        
+
                     Inscrivez Vous
                 </Button>
                 <View style={styles.forgotPass}>

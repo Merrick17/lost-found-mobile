@@ -1,15 +1,43 @@
-import {Button, Icon, Input} from 'galio-framework';
-import React, {useRef, useState} from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
-import {GlobalStyles} from '../styles/global';
+import {Picker} from '@react-native-picker/picker';
+import {Button, Input, Text} from 'galio-framework';
+import React, {useState} from 'react';
+import {Modal, StyleSheet, View} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {useSelector} from 'react-redux';
 import {colors} from '../constants/colors';
 import {ModalProps} from '../constants/types';
-
+import {GlobalStyles} from '../styles/global';
 const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
-  const [category, setCategory] = useState('categ1');
-  const categoryActionSheetRef = useRef<ActionSheetRef>(null);
-  const subCategoryActionSheet = useRef<ActionSheetRef>(null);
+  const {editList} = useSelector((state: any) => state.category);
+  const [libraryImageList, setImageLibraryList] = useState<any[]>([]);
+  const [cameraImageList, setCameraImageList] = useState<any[]>([]);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('-1');
+  const [selectedCategory, setSelectedCategory] = useState<string>('-1');
+  const [subCategoryList, setSubCategoryList] = useState([]);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const handleConfirm = () => {
+    const mappedImages = [
+      ...cameraImageList.map(img => ({
+        uri: img.uri,
+        type: img.type,
+        name: img.fileName,
+      })),
+      ...libraryImageList.map(img => ({
+        uri: img.uri,
+        type: img.type,
+        name: img.fileName,
+      })),
+    ];
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('category', selectedCategory);
+    formData.append('subCategory', selectedSubCategory);
+    mappedImages.forEach(img => {
+      formData.append('photos', img);
+    });
+  };
   return (
     <>
       <Modal
@@ -23,45 +51,91 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Ajouter nouvelle publication</Text>
+            <View style={styles.imageContainer}>
+              <Button
+                onlyIcon
+                color={colors.main}
+                icon="camera"
+                iconFamily="Entypo"
+                onPress={async () => {
+                  const options: any = {
+                    saveToPhotos: true,
+                  };
+                  const result = await launchCamera(options);
+                  //@ts-ignore
+                  setCameraImageList(result.assets);
+                  console.log('Result', result);
+                }}
+              />
+              <Button
+                onlyIcon
+                color={colors.main}
+                icon="attachment"
+                iconFamily="Entypo"
+                onPress={async () => {
+                  const options: any = {
+                    saveToPhotos: true,
+                  };
+                  const result = await launchImageLibrary(options);
+                  //@ts-ignore
+                  setImageLibraryList(result.assets);
+                  console.log('Result', result);
+                }}
+              />
+            </View>
             <Input
               style={GlobalStyles.inputStyle}
               placeholder="Titre"
               label="Titre"
+              value={title}
+              onChangeText={txt => setTitle(txt)}
             />
             <Input
               style={GlobalStyles.inputStyle}
               placeholder="Description"
               label="Description"
+              value={description}
+              onChangeText={txt => setDescription(txt)}
             />
-            <Input
-              style={GlobalStyles.inputStyle}
-              placeholder="Category"
-              label="Category"
-              value={category}
-              aria-disabled={true}
-              onPressIn={() => {
-                categoryActionSheetRef.current?.show();
-              }}
-            />
-            <Input
-              style={GlobalStyles.inputStyle}
-              placeholder="Category"
-              label="Category"
-              value={category}
-              aria-disabled={true}
-              onPressIn={() => {
-                subCategoryActionSheet.current?.show();
-              }}
-            />
-            <View style={styles.imageContainer}>
-              <Button onlyIcon color={colors.main} icon="camera" iconFamily="Entypo" />
-              <Button
-              onlyIcon
-                color={colors.main}
-                icon="attachment"
-                iconFamily="Entypo"
-              />
+            <View style={styles.categoryInput}>
+              <Picker
+                style={{width: '100%', height: 30}}
+                selectedValue={selectedCategory}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedCategory(itemValue);
+                  const subList = editList.find(
+                    (elm: any) => elm._id == itemValue,
+                  ).subCategories;
+                  setSubCategoryList(subList);
+                }}>
+                <Picker.Item label="Catégorie" value={'-1'} />
+                {editList.map((categ: any) => (
+                  <Picker.Item
+                    label={categ.name}
+                    value={categ._id}
+                    key={categ._id}
+                  />
+                ))}
+              </Picker>
             </View>
+            <View style={styles.categoryInput}>
+              <Picker
+                style={{width: '100%', height: 30}}
+                selectedValue={selectedSubCategory}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedSubCategory(itemValue);
+                }}>
+                <Picker.Item label="Sous Catégorie" value={'-1'} />
+                {subCategoryList.map((categ: any) => (
+                  <Picker.Item
+                    label={categ.name}
+                    value={categ._id}
+                    key={categ._id}
+                  />
+                ))}
+              </Picker>
+            </View>
+
             <View style={styles.modalBottom}>
               <Button size={'small'} onPress={() => handleClose()}>
                 Annuler
@@ -69,75 +143,13 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
               <Button
                 color={colors.main}
                 size={'small'}
-                onPress={() => handleClose()}>
+                onPress={() => handleConfirm()}>
                 Confirmer
               </Button>
             </View>
           </View>
         </View>
       </Modal>
-      <ActionSheet ref={categoryActionSheetRef}>
-        <View style={styles.actionSheetList}>
-          <TouchableOpacity
-            style={styles.actionSheetItem}
-            onPress={() => {
-              setCategory('categ1');
-              categoryActionSheetRef.current?.hide();
-            }}>
-            <Text style={styles.actionText}>test 1</Text>
-            <Icon name="chevron-thin-right" color="#000" family="Entypo" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionSheetItem}
-            onPress={() => {
-              setCategory('categ2');
-              categoryActionSheetRef.current?.hide();
-            }}>
-            <Text style={styles.actionText}>test 2</Text>
-            <Icon name="chevron-thin-right" color="#000" family="Entypo" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionSheetItem}
-            onPress={() => {
-              setCategory('categ3');
-              categoryActionSheetRef.current?.hide();
-            }}>
-            <Text style={styles.actionText}>test 3</Text>
-            <Icon name="chevron-thin-right" color="#000" family="Entypo" />
-          </TouchableOpacity>
-        </View>
-      </ActionSheet>
-      <ActionSheet ref={subCategoryActionSheet}>
-        <View style={styles.actionSheetList}>
-          <TouchableOpacity
-            style={styles.actionSheetItem}
-            onPress={() => {
-              setCategory('categ1');
-              subCategoryActionSheet.current?.hide();
-            }}>
-            <Text style={styles.actionText}>test 1</Text>
-            <Icon name="chevron-thin-right" color="#000" family="Entypo" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionSheetItem}
-            onPress={() => {
-              setCategory('categ2');
-              subCategoryActionSheet.current?.hide();
-            }}>
-            <Text style={styles.actionText}>test 2</Text>
-            <Icon name="chevron-thin-right" color="#000" family="Entypo" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionSheetItem}
-            onPress={() => {
-              setCategory('categ3');
-              subCategoryActionSheet.current?.hide();
-            }}>
-            <Text style={styles.actionText}>test 3</Text>
-            <Icon name="chevron-thin-right" color="#000" family="Entypo" />
-          </TouchableOpacity>
-        </View>
-      </ActionSheet>
     </>
   );
 };
@@ -150,6 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: 22,
+    height: 500,
   },
   modalView: {
     margin: 20,
@@ -167,6 +180,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     justifyContent: 'flex-start',
+    height: 600,
   },
   button: {
     borderRadius: 20,
@@ -179,6 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    zIndex: 1,
   },
   buttonOpen: {
     backgroundColor: '#F194FF',
@@ -224,5 +239,17 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 22,
     fontWeight: '600',
+  },
+  categoryInput: {
+    width: '100%',
+    height: 50,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+
+    backgroundColor: '#f7f8fa',
+    borderRadius: 10,
+    marginTop: 20,
   },
 });
