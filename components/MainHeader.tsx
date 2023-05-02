@@ -22,6 +22,7 @@ const MainHeader = ({ title, navigation }: HeaderProps) => {
                 <Icon name="exit-to-app" color="#FFF" size={30} family="MaterialIcons" />
             </TouchableOpacity>
         </View>
+
     );
 };
 

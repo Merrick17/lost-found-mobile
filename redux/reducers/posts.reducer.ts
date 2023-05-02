@@ -1,8 +1,9 @@
-import { GET_POST_LIST, SEARCH_POST } from "../actions/actionTypes";
+import { GET_POST_LIST, SEARCH_POST, SET_SELECTED_POST } from "../actions/actionTypes";
 
 const postInitState = {
     baseList: [],
-    editList: []
+    editList: [],
+    selectedPost: null
 }
 const postReducer = (state = postInitState, action: any) => {
     const { type, payload } = action;
@@ -11,6 +12,8 @@ const postReducer = (state = postInitState, action: any) => {
             return { ...state, baseList: payload, editList: payload }
         case SEARCH_POST:
             return state
+        case SET_SELECTED_POST:
+            return { ...state, selectedPost: payload }
 
         default:
             return state

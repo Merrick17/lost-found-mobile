@@ -1,28 +1,28 @@
-import {Button, Card, Input} from 'galio-framework';
-import React, {useState, useEffect} from 'react';
+import { Button, Card, Input } from 'galio-framework';
+import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-  TouchableOpacity,
   FlatList,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
-import {colors} from '../../constants/colors';
-import {ScreenProps} from '../../constants/types';
-import {GlobalStyles} from '../../styles/global';
-import {useDispatch, useSelector} from 'react-redux';
-import {getAllPostsApi} from '../../redux/actions/post.actions';
-import {BASE_URL} from '../../utils/apiMethods';
+import { colors } from '../../constants/colors';
+import { ScreenProps } from '../../constants/types';
+import { getAllPostsApi } from '../../redux/actions/post.actions';
+import { GlobalStyles } from '../../styles/global';
+import { BASE_URL } from '../../utils/apiMethods';
+import { SET_SELECTED_POST, SET_SELECTED_USER } from '../../redux/actions/actionTypes';
 
 //@ts-ignore
-const Items = ({navigation}: ScreenProps) => {
+const Items = ({ navigation }: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const {editList} = useSelector((state: any) => state.posts);
-  const {token} = useSelector(({auth}: any) => auth);
+  const { editList } = useSelector((state: any) => state.posts);
+  const { token } = useSelector(({ auth }: any) => auth);
   useEffect(() => {
     //@ts-ignore
     dispatch(getAllPostsApi(token));
@@ -50,10 +50,14 @@ const Items = ({navigation}: ScreenProps) => {
         <FlatList
           style={styles.scrollContainer}
           data={editList}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('details');
+                dispatch({
+                  type: SET_SELECTED_POST,
+                  payload: item,
+                });
               }}>
               <Card
                 flex

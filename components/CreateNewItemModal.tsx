@@ -18,10 +18,6 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  useMemo(() => {
-    console.log("Selected Category", selectedCategory);
-    console.log("Sub Category", selectedSubCategory)
-  }, [selectedCategory, selectedSubCategory])
   const dispatch = useDispatch();
   const handleConfirm = () => {
     const mappedImages = [
@@ -46,7 +42,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
     });
     //@ts-ignore
     dispatch(createPostApi(token, formData));
-    handleClose(); 
+    handleClose();
   };
 
   return (
@@ -120,7 +116,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   setSubCategoryList(subList);
                 }}>
                 <Picker.Item label="Catégorie" value={'-1'} />
-                {editList.map((categ: any) => (
+                {editList && editList.map((categ: any) => (
                   <Picker.Item
                     label={categ.name}
                     value={categ._id}
@@ -137,7 +133,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   setSelectedSubCategory(itemValue);
                 }}>
                 <Picker.Item label="Sous Catégorie" value={'-1'} />
-                {subCategoryList.map((categ: any) => (
+                {subCategoryList && subCategoryList.map((categ: any) => (
                   <Picker.Item
                     label={categ.name}
                     value={categ._id}

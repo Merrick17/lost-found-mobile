@@ -1,52 +1,56 @@
-import {Button, Icon, Text} from 'galio-framework';
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
-import {SliderBox} from 'react-native-image-slider-box';
+import { Button, Icon, Text } from 'galio-framework';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+//@ts-ignores
+import { SliderBox } from 'react-native-image-slider-box';
 import MainHeader from '../../components/MainHeader';
-import {ScreenProps} from '../../constants/types';
-import {GlobalStyles} from '../../styles/global';
-import {colors} from '../../constants/colors';
+import { ScreenProps } from '../../constants/types';
+import { GlobalStyles } from '../../styles/global';
+import { colors } from '../../constants/colors';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../utils/apiMethods';
+import { Linking } from 'react-native';
 //@ts-ignore
-const CardDetails = ({navigation}: ScreenProps) => {
+const CardDetails = ({ navigation }: ScreenProps) => {
+  const { selectedPost } = useSelector((state: any) => state.posts);
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Details'} navigation={navigation} />
       <View>
         <SliderBox
           sliderBoxHeight={300}
-          images={[
-            'https://source.unsplash.com/1024x768/?nature',
-            'https://source.unsplash.com/1024x768/?water',
-            'https://source.unsplash.com/1024x768/?girl',
-            'https://source.unsplash.com/1024x768/?tree',
-          ]}
+          images={
+            selectedPost
+              ? selectedPost.photos.map((elm: any) => `${BASE_URL}/${elm}`)
+              : []
+          }
         />
       </View>
       <View style={styles.bottomCard}>
         <View style={styles.detailsHeader}>
           <Text bold size={24}>
-            Title
+            {selectedPost ? selectedPost.title : ''}
           </Text>
           <View style={styles.locationDetails}>
             <Icon name="location" family="EvilIcons" size={25} />
-            <Text size={15}>Sousse</Text>
+            <Text size={15}>{selectedPost && selectedPost.createdBy ? selectedPost.createdBy.address : ""}</Text>
           </View>
         </View>
         <Text p style={styles.descriptionStyle}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-          mattis accumsan augue ac pulvinar. Donec sollicitudin nec turpis sit
-          amet iaculis. Ut ut eros velit. Ut pretium egestas arcu, sed
-          vestibulum arcu posuere ac. In eget accumsan arcu. Quisque turpis
-          enim, volutpat id lacus vitae, consequat blandit odio. Ut pretium
-          magna sed dui euismod, et placerat ante aliquam. Mauris nisi sem,
-          ultrices ut justo vitae, aliquam iaculis neque. Phasellus condimentum
-          accumsan diam nec cursus.
+          {selectedPost ? selectedPost.description : ''}
         </Text>
         <View style={styles.detailsFooter}>
-          <Button icon="phone-call" iconFamily="Feather" color="success">
+          <Button icon="phone-call" iconFamily="Feather" color="success" onPress={() => {
+            Linking.openURL(`tel:${selectedPost.createdBy.phoneNumber}`);
+          }}>
             Appeler
           </Button>
-          <Button icon='message-circle' iconFamily="Feather" color={colors.main}>Messager</Button>
+          <Button
+            icon="message-circle"
+            iconFamily="Feather"
+            color={colors.main}>
+            Messager
+          </Button>
         </View>
       </View>
     </SafeAreaView>

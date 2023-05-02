@@ -25,9 +25,7 @@ const ItemsNavigator = () => {
 const Main = () => {
   const dispatch = useDispatch();
   const { token } = useSelector(({ auth }: any) => auth);
-  useMemo(() => {
-    console.log("Token", token)
-  }, [token])
+
   useEffect(() => {
     //@ts-ignore
     dispatch(getCategoryList(token));
