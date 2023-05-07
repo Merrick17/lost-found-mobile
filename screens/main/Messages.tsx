@@ -6,15 +6,26 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GlobalStyles } from '../../styles/global';
 import MainHeader from '../../components/MainHeader';
 import { ScreenProps } from '../../constants/types';
 import { colors } from '../../constants/colors';
 import { Block, Icon } from 'galio-framework';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllConversationsApi } from '../../redux/actions/messsages.actions';
+import ConversationItem from '../../components/ConversationItem';
 
 const Messages = ({ navigation }: ScreenProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { user, token } = useSelector(({ auth }: any) => auth);
+  const { conversationList } = useSelector(({ messages }: any) => messages)
+  const dispatch = useDispatch();
+  useEffect(() => {
+    //@ts-ignore
+    dispatch(getAllConversationsApi(token, user._id))
+  }, [token, user])
+
   const discussions = [
     {
       id: 1,
@@ -85,22 +96,10 @@ const Messages = ({ navigation }: ScreenProps) => {
       <MainHeader title={'Messagerie'} navigation={navigation} />
       <View style={GlobalStyles.container}>
         <FlatList
-          data={discussions}
-          keyExtractor={discussion => discussion.id.toString()}
+          data={conversationList}
+          keyExtractor={discussion => discussion._id}
           renderItem={({ item }) => (
-            <Block width={350} row space="between" style={styles.discussion}>
-              <View style={styles.avatarLogo}><Text style={styles.avatarText}>SB</Text></View>
-              <View>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.lastMessage}>{`${item.lastMessage.substring(
-                  0,
-                  25,
-                )}...`}</Text>
-              </View>
-              <TouchableOpacity>
-                <Icon name="chevron-right" family="Feather" size={35} />
-              </TouchableOpacity>
-            </Block>
+           <ConversationItem item={item} navigation={navigation} user={user}/>
           )}
         />
       </View>

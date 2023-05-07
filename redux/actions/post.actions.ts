@@ -11,7 +11,7 @@ const createPostApi = (token: string, body: any) => async (dispatch: any) => {
         };
         let result = await postApi('annonce/create', body, config);
         dispatch(getAllPostsApi(token))
-        console.log('Result', result);
+      
     } catch (error) {
         console.log("Error", error)
     }

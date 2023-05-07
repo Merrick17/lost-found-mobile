@@ -9,7 +9,7 @@ const getCategoryList = (token: string) => async (disptach: any) => {
       },
     };
     const response = await getApi('category', config);
-    // console.log("Result", response);
+    console.log("Result", response);
     if (response) {
       // console.log("Result", response);
       disptach({

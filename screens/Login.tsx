@@ -1,13 +1,15 @@
 import { Button, Input, Text } from 'galio-framework';
 import React from 'react';
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { colors } from '../constants/colors';
-import { GlobalStyles } from '../styles/global';
 import { ScreenProps } from '../constants/types';
-import { useForm, Controller } from 'react-hook-form';
-import { useDispatch } from 'react-redux'
 import { handleAuthApi } from '../redux/actions/auth.actions';
+import { GlobalStyles } from '../styles/global';
+import { useToast } from "react-native-toast-notifications";
 const Login = ({ navigation }: ScreenProps) => {
+    const toast = useToast();
     const dispatch = useDispatch()
     const {
         control,
@@ -21,7 +23,7 @@ const Login = ({ navigation }: ScreenProps) => {
     });
     const onSubmit = (data: any) => {
         //@ts-ignore
-        dispatch(handleAuthApi(data, navigation))
+        dispatch(handleAuthApi(data, navigation,toast))
     };
     const handleRegister = () => {
         navigation.navigate('Register');

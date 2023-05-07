@@ -13,7 +13,8 @@ import {
     RESET_PASSWORD_FAILURE,
     UPDATE_PROFILE_REQUEST,
     UPDATE_PROFILE_SUCCESS,
-    UPDATE_PROFILE_FAILURE
+    UPDATE_PROFILE_FAILURE,
+    UPDATE_USER_PROFILE
 } from '../actions/actionTypes';
 
 const initAuthState = {
@@ -71,6 +72,8 @@ const authReducer = (state = initAuthState, action: any) => {
                 loading: false,
                 error: payload.error
             };
+        case UPDATE_USER_PROFILE:
+            return { ...state, user: payload }
         default:
             return state;
     }

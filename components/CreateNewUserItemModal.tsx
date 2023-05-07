@@ -1,27 +1,21 @@
-import { Picker } from '@react-native-picker/picker';
 import { Button, Input, Text } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, StyleSheet, View } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../constants/colors';
 import { ModalProps } from '../constants/types';
-import { createPostApi } from '../redux/actions/post.actions';
+import { createItemApi } from '../redux/actions/item.actions';
 import { GlobalStyles } from '../styles/global';
-const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
-  const { editList } = useSelector((state: any) => state.category);
+const CreateNewUserItemModal = ({ isOpen, handleClose }: ModalProps) => {
+
   const { token } = useSelector(({ auth }: any) => auth);
   const [libraryImageList, setImageLibraryList] = useState<any[]>([]);
   const [cameraImageList, setCameraImageList] = useState<any[]>([]);
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('-1');
-  const [selectedCategory, setSelectedCategory] = useState<string>('-1');
-  const [subCategoryList, setSubCategoryList] = useState([]);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const dispatch = useDispatch();
-  useEffect(() => {
-    console.log("EDIT LIST", editList)
-  }, [editList])
   const handleConfirm = () => {
     const mappedImages = [
       ...cameraImageList.map(img => ({
@@ -36,15 +30,14 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
       })),
     ];
     const formData = new FormData();
-    formData.append('title', title);
+    formData.append('name', title);
     formData.append('description', description);
-    formData.append('category', selectedCategory);
-    formData.append('subCategory', selectedSubCategory);
+
     mappedImages.forEach(img => {
       formData.append('photos', img);
     });
     //@ts-ignore
-    dispatch(createPostApi(token, formData));
+    dispatch(createItemApi(token, formData));
     handleClose();
   };
 
@@ -60,7 +53,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Ajouter nouvelle publication</Text>
+            <Text style={styles.modalText}>Ajouter nouveau element de valeurs</Text>
             <View style={styles.imageContainer}>
               <Button
                 onlyIcon
@@ -74,7 +67,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   const result = await launchCamera(options);
                   //@ts-ignore
                   setCameraImageList(result.assets);
-
+                  
                 }}
               />
               <Button
@@ -89,7 +82,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   const result = await launchImageLibrary(options);
                   //@ts-ignore
                   setImageLibraryList(result.assets);
-
+                
                 }}
               />
             </View>
@@ -107,44 +100,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
               value={description}
               onChangeText={txt => setDescription(txt)}
             />
-            <View style={styles.categoryInput}>
-              <Picker
-                style={{ width: '100%', height: 30 }}
-                selectedValue={selectedCategory}
-                onValueChange={(itemValue, itemIndex) => {
-                  setSelectedCategory(itemValue);
-                  const subList = editList.find(
-                    (elm: any) => elm._id == itemValue,
-                  ).subCategories;
-                  setSubCategoryList(subList);
-                }}>
-                <Picker.Item label="Catégorie" value={'-1'} />
-                {editList && editList.map((categ: any) => (
-                  <Picker.Item
-                    label={categ.name}
-                    value={categ._id}
-                    key={categ._id}
-                  />
-                ))}
-              </Picker>
-            </View>
-            <View style={styles.categoryInput}>
-              <Picker
-                style={{ width: '100%', height: 30 }}
-                selectedValue={selectedSubCategory}
-                onValueChange={(itemValue, itemIndex) => {
-                  setSelectedSubCategory(itemValue);
-                }}>
-                <Picker.Item label="Sous Catégorie" value={'-1'} />
-                {subCategoryList && subCategoryList.map((categ: any) => (
-                  <Picker.Item
-                    label={categ.name}
-                    value={categ._id}
-                    key={categ._id}
-                  />
-                ))}
-              </Picker>
-            </View>
+
 
             <View style={styles.modalBottom}>
               <Button size={'small'} onPress={() => handleClose()}>
@@ -164,7 +120,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
   );
 };
 
-export default CreateNewItemModal;
+export default CreateNewUserItemModal;
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -172,7 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: 22,
-    height: 500,
+    height: 300,
   },
   modalView: {
     margin: 20,
@@ -190,7 +146,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     justifyContent: 'flex-start',
-    height: 600,
+    height: 400,
   },
   button: {
     borderRadius: 20,

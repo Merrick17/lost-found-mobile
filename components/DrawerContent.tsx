@@ -3,13 +3,12 @@ import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { colors } from '../constants/colors';
 import { Text, Button } from 'galio-framework';
+import { useSelector } from 'react-redux';
 const DrawerContent = (props: any) => {
     const { state } = props;
     const { routes, index } = state; //Not sure about the name of index property. Do check it out by logging the 'state' variable.
     const focusedRoute = routes[index];
-    useMemo(() => {
-        console.log(focusedRoute);
-    }, [focusedRoute]);
+    const { user } = useSelector(({ auth }: any) => auth)
     return (
         <DrawerContentScrollView {...props}>
             {/* Add your custom header */}
@@ -24,15 +23,15 @@ const DrawerContent = (props: any) => {
                         backgroundColor: colors.main, margin: 10
                     }}>
                     <Text size={24} bold color="#FFF">
-                        SB
+                        {user && user.firstName[0]} {user && user.lastName[0]}
                     </Text>
                 </View>
                 <View style={styles.headerButtons}>
                     <Text bold size={17}>
-                        Safwen Ben Fredj
+                        {user && user.firstName} {user && user.lastName}
                     </Text>
                     <Text size={15}>
-                        Knaies 4014,Sousse
+                        {user && user.address}
                     </Text>
 
                 </View>
@@ -53,7 +52,7 @@ const DrawerContent = (props: any) => {
                 onPress={() => props.navigation.navigate('Messages')}
                 focused={focusedRoute['name'] === 'Messages'}
             />
-             <DrawerItem
+            <DrawerItem
                 label="Mon Profil"
                 onPress={() => props.navigation.navigate('Profile')}
                 focused={focusedRoute['name'] === 'Profile'}
@@ -61,7 +60,7 @@ const DrawerContent = (props: any) => {
             <DrawerItem
                 label="Deconnexion"
                 onPress={() => props.navigation.navigate('Login')}
-                // focused={focusedRoute['name'] === 'Messages'}
+            // focused={focusedRoute['name'] === 'Messages'}
             />
         </DrawerContentScrollView>
     );

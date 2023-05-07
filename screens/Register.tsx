@@ -13,7 +13,9 @@ import { ScreenProps } from '../constants/types';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux'
 import { createUserApi } from '../redux/actions/user.actions';
+import { useToast } from 'react-native-toast-notifications';
 const Register = ({ navigation }: ScreenProps) => {
+    const toast = useToast();
     const {
         control,
         handleSubmit,
@@ -30,9 +32,9 @@ const Register = ({ navigation }: ScreenProps) => {
     });
     const dispatch = useDispatch();
     const onSubmit = (data: any) => {
-        console.log('Daata', data);
+
         //@ts-ignore
-        dispatch(createUserApi(data))
+        dispatch(createUserApi(data,toast))
     }
     const handleLogin = () => {
         navigation.pop();

@@ -28,7 +28,9 @@ const updateApi = async (url:string, body:any, config = {}) => {
   try {
     const { data } = await axios.put(`${BASE_URL}/${url}`, body, config);
     return data;
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error",error)
+  }
 };
 
 export { updateApi, postApi, deleteApi, getApi };

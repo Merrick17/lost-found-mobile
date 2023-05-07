@@ -7,12 +7,24 @@ import MainHeader from '../../components/MainHeader';
 import { ScreenProps } from '../../constants/types';
 import { GlobalStyles } from '../../styles/global';
 import { colors } from '../../constants/colors';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BASE_URL } from '../../utils/apiMethods';
 import { Linking } from 'react-native';
+import { createConversationApi } from '../../redux/actions/messsages.actions';
+import { useNavigation } from '@react-navigation/native';
 //@ts-ignore
 const CardDetails = ({ navigation }: ScreenProps) => {
   const { selectedPost } = useSelector((state: any) => state.posts);
+  const { user, token } = useSelector(({ auth }: any) => auth);
+  const nav = useNavigation();
+  const dispatch = useDispatch();
+  const handleCreateConversation = () => {
+    //@ts-ignore
+    dispatch(createConversationApi(token, [user._id, selectedPost.createdBy._id], user._id));
+    //@ts-ignore
+    nav.navigate('Messages', { screen: 'conversation' })
+    //navigation.navigate('conversation')
+  }
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Details'} navigation={navigation} />
@@ -48,7 +60,7 @@ const CardDetails = ({ navigation }: ScreenProps) => {
           <Button
             icon="message-circle"
             iconFamily="Feather"
-            color={colors.main}>
+            color={colors.main} onPress={handleCreateConversation}>
             Messager
           </Button>
         </View>

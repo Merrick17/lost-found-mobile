@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@pusher/pusher-websocket-react-native": "^1.2.1",
     "@react-native-async-storage/async-storage": "^1.18.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-picker/picker": "^2.4.10",
