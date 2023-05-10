@@ -1,5 +1,5 @@
-import { Button, Card, Input } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
+import {Button, Card, Input, Text} from 'galio-framework';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,22 +7,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
-import { colors } from '../../constants/colors';
-import { ScreenProps } from '../../constants/types';
-import { getAllPostsApi } from '../../redux/actions/post.actions';
-import { GlobalStyles } from '../../styles/global';
-import { BASE_URL } from '../../utils/apiMethods';
-import { SET_SELECTED_POST, SET_SELECTED_USER } from '../../redux/actions/actionTypes';
-
+import {colors} from '../../constants/colors';
+import {ScreenProps} from '../../constants/types';
+import {SET_SELECTED_POST} from '../../redux/actions/actionTypes';
+import {getAllPostsApi} from '../../redux/actions/post.actions';
+import {GlobalStyles} from '../../styles/global';
+import {TabView, SceneMap} from 'react-native-tab-view';
 //@ts-ignore
-const Items = ({ navigation }: ScreenProps) => {
+const Items = ({navigation}: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const { editList } = useSelector((state: any) => state.posts);
-  const { token } = useSelector(({ auth }: any) => auth);
+  const {editList} = useSelector((state: any) => state.posts);
+  const {token} = useSelector(({auth}: any) => auth);
+  const [itemsIndex, setItemsIndex] = useState(1);
   useEffect(() => {
     //@ts-ignore
     dispatch(getAllPostsApi(token));
@@ -31,6 +31,30 @@ const Items = ({ navigation }: ScreenProps) => {
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Publications'} navigation={navigation} />
+      <View
+        style={{
+          width: '100%',
+          height: 50,
+          backgroundColor: colors.hover,
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          flexDirection: 'row',
+        }}>
+        <TouchableOpacity
+          style={itemsIndex == 1 ? styles.lostItemSelected : styles.lostItem}
+          onPress={() => {
+            setItemsIndex(1);
+          }}>
+          <Text style={styles.lostItemText}>Perdu</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={itemsIndex == 2 ? styles.lostItemSelected : styles.lostItem}
+          onPress={() => {
+            setItemsIndex(2);
+          }}>
+          <Text style={styles.lostItemText}>Trouvé</Text>
+        </TouchableOpacity>
+      </View>
       <View style={GlobalStyles.container}>
         <CreateNewItemModal
           isOpen={isCreateOpen}
@@ -49,8 +73,14 @@ const Items = ({ navigation }: ScreenProps) => {
 
         <FlatList
           style={styles.scrollContainer}
-          data={editList}
-          renderItem={({ item }) => (
+          data={editList.filter((elm: any) => {
+            if (itemsIndex == 1 && elm.isLost) {
+              return elm;
+            } else if (itemsIndex == 2 && !elm.isLost) {
+              return elm;
+            }
+          })}
+          renderItem={({item}) => (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('details');
@@ -68,7 +98,7 @@ const Items = ({ navigation }: ScreenProps) => {
                 location={item.createdBy.address}
                 avatar="http://i.pravatar.cc/100?id=skater"
                 imageStyle={styles.cardImageRadius}
-                image={`${BASE_URL}/${item.photos[0]}`}
+                image={`${item.photos[0]}`}
               />
             </TouchableOpacity>
           )}
@@ -120,5 +150,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     verticalAlign: 'middle',
+  },
+  lostItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '50%',
+    backgroundColor: colors.main,
+    height: '100%',
+  },
+  lostItemSelected: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '50%',
+    backgroundColor: colors.hover,
+  },
+  lostItemText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFF',
   },
 });

@@ -33,7 +33,7 @@ const CardDetails = ({ navigation }: ScreenProps) => {
           sliderBoxHeight={300}
           images={
             selectedPost
-              ? selectedPost.photos.map((elm: any) => `${BASE_URL}/${elm}`)
+              ? selectedPost.photos.map((elm: any) => `${elm}`)
               : []
           }
         />

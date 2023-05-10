@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker';
 import { Button, Input, Text } from 'galio-framework';
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, View } from 'react-native';
+import { Modal, StyleSheet, View, Switch } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../constants/colors';
@@ -18,6 +18,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [isLost, setIsLost] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {
     console.log("EDIT LIST", editList)
@@ -40,6 +41,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
     formData.append('description', description);
     formData.append('category', selectedCategory);
     formData.append('subCategory', selectedSubCategory);
+    formData.append('isLost', isLost)
     mappedImages.forEach(img => {
       formData.append('photos', img);
     });
@@ -144,6 +146,16 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   />
                 ))}
               </Picker>
+            </View>
+            <View style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10, marginVertical: 20 }}>
+              <Text style={{ fontSize: 17, fontWeight: 500 }}>Element Perdu ? : </Text>
+              <Switch
+                trackColor={{ false: '#767577', true: colors.main }}
+                thumbColor={isLost ? colors.hover : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={(value) => setIsLost(value)}
+                value={isLost}
+              />
             </View>
 
             <View style={styles.modalBottom}>

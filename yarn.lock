@@ -6163,6 +6163,11 @@
   dependencies:
     "react-native-snap-carousel" "latest"
 
+"react-native-pager-view@*", "react-native-pager-view@^6.2.0":
+  "integrity" "sha512-pf9OnL/Tkr+5s4Gjmsn7xh91PtJLDa6qxYa/bmtUhd/+s4cQdWQ8DIFoOFghwZIHHHwVdWtoXkp6HtpjN+r20g=="
+  "resolved" "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.2.0.tgz"
+  "version" "6.2.0"
+
 "react-native-picker-select@^8.0.4":
   "integrity" "sha512-orBjPIwBkV5oipyVw263YNMI56f6Kj3p/ejabZoCYYNSG3AiLVVhC2RqsxMgDA7IayyURAW+AlV+mDJyVqLBkg=="
   "resolved" "https://registry.npmjs.org/react-native-picker-select/-/react-native-picker-select-8.0.4.tgz"
@@ -6201,6 +6206,13 @@
   dependencies:
     "prop-types" "^15.6.1"
     "react-addons-shallow-compare" "15.6.2"
+
+"react-native-tab-view@^3.5.1":
+  "integrity" "sha512-qdrS5t+AEhfuKQyuCXkwHu4IVppkuTvzWWlkSZKrPaSkjjIa32xrsGxt1UW9YDdro2w4AMw5hKn1hFmg/5mvzA=="
+  "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-3.5.1.tgz"
+  "version" "3.5.1"
+  dependencies:
+    "use-latest-callback" "^0.1.5"
 
 "react-native-toast-notifications@^3.3.1":
   "integrity" "sha512-yc1Q2nOdIYvAf0GAIlmg8q42hiwpEHnLxkxJ6P+tN6jpcKZ1qzMXlgnmNdyF9cm9VOyHQexEP8952IKNAv1Olw=="
