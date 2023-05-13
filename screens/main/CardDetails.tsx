@@ -1,17 +1,18 @@
 import { Button, Icon, Text } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 //@ts-ignores
-import { SliderBox } from 'react-native-image-slider-box';
-import MainHeader from '../../components/MainHeader';
-import { ScreenProps } from '../../constants/types';
-import { GlobalStyles } from '../../styles/global';
-import { colors } from '../../constants/colors';
-import { useDispatch, useSelector } from 'react-redux';
-import { BASE_URL } from '../../utils/apiMethods';
-import { Linking } from 'react-native';
-import { createConversationApi } from '../../redux/actions/messsages.actions';
 import { useNavigation } from '@react-navigation/native';
+import { Linking } from 'react-native';
+import { SliderBox } from 'react-native-image-slider-box';
+import { useDispatch, useSelector } from 'react-redux';
+import MainHeader from '../../components/MainHeader';
+import { colors } from '../../constants/colors';
+import { ScreenProps } from '../../constants/types';
+import { createConversationApi } from '../../redux/actions/messsages.actions';
+import { GlobalStyles } from '../../styles/global';
+import { markPostAsFound } from '../../redux/actions/post.actions';
+
 //@ts-ignore
 const CardDetails = ({ navigation }: ScreenProps) => {
   const { selectedPost } = useSelector((state: any) => state.posts);
@@ -24,6 +25,10 @@ const CardDetails = ({ navigation }: ScreenProps) => {
     //@ts-ignore
     nav.navigate('Messages', { screen: 'conversation' })
     //navigation.navigate('conversation')
+  }
+  const handleSendAlert = () => {
+    //@ts-ignore
+    dispatch(markPostAsFound(selectedPost._id, token))
   }
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
@@ -46,23 +51,25 @@ const CardDetails = ({ navigation }: ScreenProps) => {
           <View style={styles.locationDetails}>
             <Icon name="location" family="EvilIcons" size={25} />
             <Text size={15}>{selectedPost && selectedPost.createdBy ? selectedPost.createdBy.address : ""}</Text>
+
           </View>
         </View>
         <Text p style={styles.descriptionStyle}>
           {selectedPost ? selectedPost.description : ''}
         </Text>
         <View style={styles.detailsFooter}>
-          <Button icon="phone-call" iconFamily="Feather" color="success" onPress={() => {
+          <Button size={"small"} onlyIcon icon='bells' iconFamily="AntDesign"  onPress={handleSendAlert}/>
+          <Button icon="phone-call" iconFamily="Feather" size={"small"} onlyIcon color="success" onPress={() => {
             Linking.openURL(`tel:${selectedPost.createdBy.phoneNumber}`);
-          }}>
-            Appeler
-          </Button>
+          }} />
+
           <Button
+            size={"small"}
             icon="message-circle"
             iconFamily="Feather"
-            color={colors.main} onPress={handleCreateConversation}>
-            Messager
-          </Button>
+            onlyIcon
+            color={colors.main} onPress={handleCreateConversation} />
+
         </View>
       </View>
     </SafeAreaView>
@@ -106,8 +113,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    gap: 10,
+    gap: 5,
     position: 'absolute',
     bottom: 10,
+    width: "100%"
   },
 });

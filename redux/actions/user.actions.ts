@@ -35,6 +35,19 @@ const createUserApi = (body: any, token: string, toast: any) => async (dispatch:
     });
   }
 };
+const setUserDeviceId = async (deviceId: string, token: string) => {
+  try {
+    const config = {
+      headers: {
+        "access-token": token
+      }
+    };
+    const result = await postApi('users/deviceId', { deviceId: deviceId }, config);
+    console.log("Result USer DEVICE ID", result)
+  } catch (error) {
+    console.log("Result USer DEVICE ID", error.message)
+  }
+}
 const updateUserApi = (body: any, token: string, toast: any) => async (dispatch: any) => {
   const config = {
     headers: {
@@ -58,4 +71,4 @@ const updateUserApi = (body: any, token: string, toast: any) => async (dispatch:
   }
 };
 
-export { getAllUsersApi, createUserApi, updateUserApi };
+export { getAllUsersApi, createUserApi, updateUserApi ,setUserDeviceId};

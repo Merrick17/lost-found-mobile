@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SheetProvider } from 'react-native-actions-sheet';
 import { ToastProvider } from 'react-native-toast-notifications'
 import 'react-native-gesture-handler';
@@ -12,6 +12,7 @@ import { store } from './redux/store';
 
 const Stack = createNativeStackNavigator();
 const App = () => {
+
   return (
     <Provider store={store}>
       <ToastProvider>
