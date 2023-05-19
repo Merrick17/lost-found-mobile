@@ -1,5 +1,5 @@
-import {Button, Card, Input, Text} from 'galio-framework';
-import React, {useEffect, useState} from 'react';
+import { Button, Card, Input, Text } from 'galio-framework';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,21 +7,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
-import {colors} from '../../constants/colors';
-import {ScreenProps} from '../../constants/types';
-import {SET_SELECTED_POST} from '../../redux/actions/actionTypes';
-import {getAllPostsApi} from '../../redux/actions/post.actions';
-import {GlobalStyles} from '../../styles/global';
-import {TabView, SceneMap} from 'react-native-tab-view';
+import { colors } from '../../constants/colors';
+import { ScreenProps } from '../../constants/types';
+import { SET_SELECTED_POST } from '../../redux/actions/actionTypes';
+import { getAllPostsApi } from '../../redux/actions/post.actions';
+import { GlobalStyles } from '../../styles/global';
+import { stringMd5 } from 'react-native-quick-md5';
 //@ts-ignore
-const Items = ({navigation}: ScreenProps) => {
+const Items = ({ navigation }: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const {editList} = useSelector((state: any) => state.posts);
-  const {token} = useSelector(({auth}: any) => auth);
+  const { editList } = useSelector((state: any) => state.posts);
+  const { token } = useSelector(({ auth }: any) => auth);
   const [itemsIndex, setItemsIndex] = useState(1);
   useEffect(() => {
     //@ts-ignore
@@ -80,7 +80,7 @@ const Items = ({navigation}: ScreenProps) => {
               return elm;
             }
           })}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('details');
@@ -96,7 +96,7 @@ const Items = ({navigation}: ScreenProps) => {
                 title={item.title}
                 caption={`${item.createdBy.firstName} ${item.createdBy.lastName}`}
                 location={item.createdBy.address}
-                avatar="http://i.pravatar.cc/100?id=skater"
+                avatar={`https://www.gravatar.com/avatar/${stringMd5(item.createdBy.email)}&d=identicon`}
                 imageStyle={styles.cardImageRadius}
                 image={`${item.photos[0]}`}
               />

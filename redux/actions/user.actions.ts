@@ -44,7 +44,7 @@ const setUserDeviceId = async (deviceId: string, token: string) => {
     };
     const result = await postApi('users/deviceId', { deviceId: deviceId }, config);
     console.log("Result USer DEVICE ID", result)
-  } catch (error) {
+  } catch (error:any) {
     console.log("Result USer DEVICE ID", error.message)
   }
 }
