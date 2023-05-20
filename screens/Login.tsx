@@ -20,10 +20,13 @@ const Login = ({ navigation }: ScreenProps) => {
             email: '',
             password: '',
         },
+
     });
     const onSubmit = (data: any) => {
+        const { email, password } = data;
+
         //@ts-ignore
-        dispatch(handleAuthApi(data, navigation,toast))
+        dispatch(handleAuthApi({ email: email.trim(), password }, navigation, toast))
     };
     const handleRegister = () => {
         navigation.navigate('Register');
