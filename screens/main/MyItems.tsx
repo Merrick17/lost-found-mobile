@@ -5,7 +5,7 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
-  View,
+  View, Alert
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import EditItemModal from '../../components/EditItemModal';
@@ -48,8 +48,22 @@ const MyItems = ({ navigation }: ScreenProps) => {
         }}
         onConfirmPressed={() => {
           if (selectedPost) {
-            //@ts-ignore
-            dispatch(deletePostApi(token, selectedPost._id))
+            Alert.alert('Confirmation', 'Est ce que vous etes sure de supprimer cette annonce', [
+              {
+                text: 'Non',
+                onPress: () => {
+                  console.log("Annuler")
+                },
+                style: 'cancel',
+              },
+              {
+                text: 'Oui', onPress: () => {
+                  //@ts-ignore
+                  dispatch(deletePostApi(token, selectedPost._id))
+                }
+              },
+            ]);
+
 
           }
           setShowAlert(false);

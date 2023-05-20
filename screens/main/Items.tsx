@@ -12,7 +12,7 @@ import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
 import { colors } from '../../constants/colors';
 import { ScreenProps } from '../../constants/types';
-import { SET_SELECTED_POST } from '../../redux/actions/actionTypes';
+import { SET_SELECTED_INDEX, SET_SELECTED_POST } from '../../redux/actions/actionTypes';
 import { getAllPostsApi } from '../../redux/actions/post.actions';
 import { GlobalStyles } from '../../styles/global';
 import { stringMd5 } from 'react-native-quick-md5';
@@ -20,9 +20,9 @@ import { stringMd5 } from 'react-native-quick-md5';
 const Items = ({ navigation }: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const { editList } = useSelector((state: any) => state.posts);
+  const { editList, itemsIndex } = useSelector((state: any) => state.posts);
   const { token } = useSelector(({ auth }: any) => auth);
-  const [itemsIndex, setItemsIndex] = useState(1);
+  //const [itemsIndex, setItemsIndex] = useState(1);
   useEffect(() => {
     //@ts-ignore
     dispatch(getAllPostsApi(token));
@@ -43,14 +43,25 @@ const Items = ({ navigation }: ScreenProps) => {
         <TouchableOpacity
           style={itemsIndex == 1 ? styles.lostItemSelected : styles.lostItem}
           onPress={() => {
-            setItemsIndex(1);
+            dispatch({
+              type: SET_SELECTED_INDEX,
+              payload: 1
+            })
+            //@ts-ignore
+            dispatch(getAllPostsApi(token));
+            //setItemsIndex(1);
           }}>
           <Text style={styles.lostItemText}>Perdu</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={itemsIndex == 2 ? styles.lostItemSelected : styles.lostItem}
           onPress={() => {
-            setItemsIndex(2);
+            dispatch({
+              type: SET_SELECTED_INDEX,
+              payload: 2
+            })
+            //@ts-ignore
+            dispatch(getAllPostsApi(token));
           }}>
           <Text style={styles.lostItemText}>Trouvé</Text>
         </TouchableOpacity>

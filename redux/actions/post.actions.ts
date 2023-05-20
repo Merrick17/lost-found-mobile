@@ -1,7 +1,8 @@
+import { Alert } from 'react-native';
 import { deleteApi, getApi, postApi, updateApi } from '../../utils/apiMethods';
-import { GET_POST_LIST } from './actionTypes';
+import { GET_POST_LIST, SET_SELECTED_INDEX } from './actionTypes';
 
-const createPostApi = (token: string, body: any) => async (dispatch: any) => {
+const createPostApi = (token: string, body: any,isLost:boolean) => async (dispatch: any) => {
     try {
         const config = {
             headers: {
@@ -10,24 +11,57 @@ const createPostApi = (token: string, body: any) => async (dispatch: any) => {
             },
         };
         let result = await postApi('annonce/create', body, config);
-        dispatch(getAllPostsApi(token));
+        if (result && result.hasSimilair) {
+            Alert.alert(
+                'Attention',
+                `Il ya des annonces avec cet element marqué comme ${isLost ? "trouvé" : "perdu"}`,
+                [
+                    {
+                        text: "Afficher l'existant",
+                        onPress: () => {
+                            console.log('Cancel Pressed');
+                            dispatch(getAllPosts(result.result));
+                            console.log("IS LOST",);
+                            if (isLost) {
+                                dispatch({ type: SET_SELECTED_INDEX, payload: 2 })
+                            } else {
+                                dispatch({ type: SET_SELECTED_INDEX, payload: 1 })
+                            }
+
+                        },
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Continuer quand meme',
+                        onPress: async () => {
+                            let result = await postApi('annonce/create-force', body, config);
+                            dispatch(getAllPostsApi(token));
+                        },
+                    },
+                ],
+            );
+        } else {
+            dispatch(getAllPostsApi(token));
+        }
+        console.log('RESULT CREATE', result);
     } catch (error) {
         console.log('Error', error);
     }
 };
-const updatePostApi = (token: string, id: string, body: any) => async (dispatch: any) => {
-    try {
-        const config = {
-            headers: {
-                'access-token': token,
-            },
-        };
-        let result = await updateApi(`annonce/${id}`, body, config);
-        dispatch(getAllPostsApi(token));
-    } catch (error) {
-        console.log('Error', error);
-    }
-};
+const updatePostApi =
+    (token: string, id: string, body: any) => async (dispatch: any) => {
+        try {
+            const config = {
+                headers: {
+                    'access-token': token,
+                },
+            };
+            let result = await updateApi(`annonce/${id}`, body, config);
+            dispatch(getAllPostsApi(token));
+        } catch (error) {
+            console.log('Error', error);
+        }
+    };
 const getAllPostsApi = (token: string) => async (dispatch: any) => {
     try {
         const config = {
@@ -89,4 +123,10 @@ const deletePostApi =
             }
         } catch (error) { }
     };
-export { createPostApi, getAllPostsApi, getAllPostsByUser, deletePostApi, updatePostApi };
+export {
+    createPostApi,
+    getAllPostsApi,
+    getAllPostsByUser,
+    deletePostApi,
+    updatePostApi,
+};

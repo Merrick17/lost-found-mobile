@@ -46,7 +46,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
       formData.append('photos', img);
     });
     //@ts-ignore
-    dispatch(createPostApi(token, formData));
+    dispatch(createPostApi(token, formData, isLost));
     handleClose();
   };
 

@@ -1,6 +1,6 @@
-import {postApi} from '../../utils/apiMethods';
-import {storeData} from '../../utils/localstorage';
-import {LOGIN_SUCCESS, UPDATE_USER_PROFILE} from './actionTypes';
+import { postApi } from '../../utils/apiMethods';
+import { storeData } from '../../utils/localstorage';
+import { LOGIN_SUCCESS, UPDATE_USER_PROFILE } from './actionTypes';
 
 const handleAuthApi =
   (body: any, navigation: any, toast: any) => async (dispatch: any) => {
@@ -8,10 +8,21 @@ const handleAuthApi =
       let result = await postApi('users/login', body);
 
       if (result.success) {
-        const {token, userId, user} = result;
-        await storeData(token, 'token');
-        dispatch(handleAuthUser(token, userId, user));
-        navigation.navigate('Main');
+        const { token, userId, user } = result;
+        if (user.role == "USER") {
+          await storeData(token, 'token');
+          dispatch(handleAuthUser(token, userId, user));
+          navigation.navigate('Main');
+        } else {
+          toast.show('Adresse ou email inconnu', {
+            type: 'danger',
+            placement: 'bottom',
+            duration: 4000,
+            offset: 30,
+            animationType: 'zoom-in',
+          });
+        }
+
       } else {
         toast.show('Adresse ou email inconnu', {
           type: 'danger',
@@ -21,7 +32,7 @@ const handleAuthApi =
           animationType: 'zoom-in',
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
 const handleAuthUser = (token: string, userId: string, user: any) => {
@@ -39,4 +50,4 @@ const updateUser = (data: any) => {
     payload: data,
   };
 };
-export {handleAuthApi, updateUser};
+export { handleAuthApi, updateUser };
