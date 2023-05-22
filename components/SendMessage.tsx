@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
-import { Input, Button } from 'galio-framework';
+import { Button, Input } from 'galio-framework';
+import React from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { colors } from '../constants/colors';
 const SendMessage = ({
     onSend,

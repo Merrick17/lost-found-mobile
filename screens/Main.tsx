@@ -1,6 +1,6 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import React, { useEffect, useMemo } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { Alert, Linking, StyleSheet } from 'react-native';
 import Items from './main/Items';
 import Messages from './main/Messages';
 import MyItems from './main/MyItems';
@@ -49,7 +49,26 @@ const Main = () => {
   };
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      remoteMessage.notification?.body
+      if (remoteMessage && remoteMessage.notification?.title && remoteMessage.notification?.body) {
+        const phoneNumberRegex = /(\d{3})[-.\s]?(\d{3})[-.\s]?(\d{4})/;
+        //@ts-ignore 
+        const phoneNumber = remoteMessage.notification?.body.match(phoneNumberRegex)[0];
+
+        Alert.alert(remoteMessage.notification?.title, remoteMessage.notification?.body, [
+          {
+            text: 'Appeler',
+            onPress: () => {
+              Linking.openURL(`tel:${phoneNumber}`);
+            },
+          },
+          {
+            text: 'Annuler',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+
+          }]);
+      }
     });
 
     return unsubscribe;
