@@ -2,6 +2,8 @@ import { Button } from 'galio-framework';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '../constants/colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteItemApi } from '../redux/actions/item.actions';
 
 type ItemCardType = {
     title: string;
@@ -19,6 +21,12 @@ const ItemCard = ({
     photos,
     ind,
 }: ItemCardType) => {
+    const dispatch = useDispatch();
+    const { token } = useSelector((state: any) => state.auth)
+    const handleDelete = () => {
+        //@ts-ignore
+        dispatch(deleteItemApi(id, token))
+    }
     return (
         <View style={styles.card}>
             <View style={styles.itemCounter}>
@@ -32,7 +40,7 @@ const ItemCard = ({
                     <Text style={{ fontWeight: '500', fontSize: 14 }}>{description}</Text>
                 </View>
                 <View style={styles.itemButtons}>
-                    <Button
+                    <Button onPress={handleDelete}
                         onlyIcon
                         icon="delete"
                         iconFamily="antdesign"

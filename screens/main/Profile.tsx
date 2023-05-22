@@ -51,7 +51,7 @@ const Profile = ({ navigation }: { navigation: any }) => {
           </View>
         </View>
         <Text style={styles.titleStyle}>Mes Valeurs</Text>
-        <FlatList data={editList} renderItem={({ item, index }) => <ItemCard title={item.name} description={item.description} id={''} createdAt={''} photos={[]} ind={index + 1} />} />
+        <FlatList data={editList} renderItem={({ item, index }) => <ItemCard title={item.name} description={item.description} id={item._id} createdAt={''} photos={[]} ind={index + 1} />} />
         <Button
           onlyIcon
           size={'small'}

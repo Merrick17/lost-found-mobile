@@ -46,6 +46,7 @@ const Conversations = ({ navigation, route }: ScreenProps) => {
     }, [selectedConversation, reverseUser]);
     const initPusher = async () => {
         if (selectedConversation) {
+            console.log("Selected Conversation",selectedConversation);
             await pusher.init({
                 apiKey: '4ad2f673d2e939651348',
                 cluster: 'eu',
@@ -55,7 +56,7 @@ const Conversations = ({ navigation, route }: ScreenProps) => {
             await pusher.subscribe({
                 channelName: selectedConversation._id,
                 onEvent: (event: PusherEvent) => {
-                    console.log(`Event received: ${event.data['message']}`);
+                    console.log(`Event received: ${event.data.message}`);
                     //@ts-ignore
                     //dispatch(updateCoversationApi(token, selectedConversation._id));
                     dispatch(setSelectedConversation(event.data['message']))
@@ -68,7 +69,8 @@ const Conversations = ({ navigation, route }: ScreenProps) => {
     }, [selectedConversation]);
 
     const handleSendMessage = () => {
-        if (user) {
+        if (user && selectedConversation) {
+            //console.log("Selected CONV",selectedConversation); 
             //@ts-ignore
             dispatch(
                 //@ts-ignore

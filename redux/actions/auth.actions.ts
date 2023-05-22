@@ -6,7 +6,7 @@ const handleAuthApi =
   (body: any, navigation: any, toast: any) => async (dispatch: any) => {
     try {
       let result = await postApi('users/login', body);
-
+      console.log("Result",result)
       if (result.success) {
         const { token, userId, user } = result;
         if (user.role == "USER") {
@@ -32,7 +32,9 @@ const handleAuthApi =
           animationType: 'zoom-in',
         });
       }
-    } catch (error) { }
+    } catch (error) { 
+      console.log("ERROR",error)
+    }
   };
 
 const handleAuthUser = (token: string, userId: string, user: any) => {

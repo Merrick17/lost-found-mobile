@@ -14,10 +14,12 @@ const ConversationItem = ({ item, navigation, user }: { item: any, navigation: a
         if (user && item) {
 
             const newUser = item.participants.find((itm: any) => itm._id !== user._id);
-            
-            const message = `${item.messages[0].content}...`
-            setReverseUser(newUser);
-            setLastMessage(message);
+            if (item.messages.length > 0) {
+                const message = `${item.messages[0].content}...`
+                setReverseUser(newUser);
+                setLastMessage(message);
+            }
+
         }
     }, [item])
     return (

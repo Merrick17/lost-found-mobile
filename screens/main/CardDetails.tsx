@@ -21,7 +21,7 @@ const CardDetails = ({ navigation }: ScreenProps) => {
   const dispatch = useDispatch();
   const handleCreateConversation = () => {
     //@ts-ignore
-    dispatch(createConversationApi(token, [user._id, selectedPost.createdBy._id], user._id));
+    dispatch(createConversationApi(token, { participants: [user._id, selectedPost.createdBy._id] }, user._id));
     //@ts-ignore
     nav.navigate('Messages', { screen: 'conversation' })
     //navigation.navigate('conversation')
@@ -58,7 +58,7 @@ const CardDetails = ({ navigation }: ScreenProps) => {
           {selectedPost ? selectedPost.description : ''}
         </Text>
         <View style={styles.detailsFooter}>
-          <Button size={"small"} onlyIcon icon='bells' iconFamily="AntDesign"  onPress={handleSendAlert}/>
+          <Button size={"small"} onlyIcon icon='bells' iconFamily="AntDesign" onPress={handleSendAlert} />
           <Button icon="phone-call" iconFamily="Feather" size={"small"} onlyIcon color="success" onPress={() => {
             Linking.openURL(`tel:${selectedPost.createdBy.phoneNumber}`);
           }} />

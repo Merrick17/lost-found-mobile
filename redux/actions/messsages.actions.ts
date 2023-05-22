@@ -3,6 +3,7 @@ import {GET_CONVERSATION_LIST, SET_SELECTED_CONVERSATION} from './actionTypes';
 
 const createConversationApi =
   (token: string, body: any, userId: string) => async (dispatch: any) => {
+    console.log("Body",body); 
     try {
       const config = {
         headers: {
@@ -10,7 +11,8 @@ const createConversationApi =
         },
       };
       let result = await postApi('conversations', body, config);
-      setSelectedConversation(result);
+      console.log("Result",result); 
+      dispatch(setSelectedConversation(result));
       dispatch(getAllConversationsApi(token, userId));
     } catch (error) {
       console.log('Error', error);

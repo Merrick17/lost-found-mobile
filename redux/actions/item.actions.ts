@@ -1,4 +1,4 @@
-import { getApi, postApi } from '../../utils/apiMethods';
+import { deleteApi, getApi, postApi } from '../../utils/apiMethods';
 import { GET_ITEM_LIST } from './actionTypes';
 
 const createItemApi = (token: string, body: any) => async (dispatch: any) => {
@@ -11,7 +11,7 @@ const createItemApi = (token: string, body: any) => async (dispatch: any) => {
         };
         let result = await postApi('items/create', body, config);
         dispatch(getAllItemsApi(token))
-      
+
     } catch (error) {
         console.log("Error", error)
     }
@@ -24,8 +24,8 @@ const getAllItemsApi = (token: string) => async (dispatch: any) => {
             },
         };
         let response = await getApi('items', config);
-    
-        if (response ) {
+
+        if (response) {
             dispatch(getAllItems(response))
         }
     } catch (error) {
@@ -38,5 +38,21 @@ const getAllItems = (data: any) => {
         payload: data
     }
 }
-export { createItemApi, getAllItemsApi };
+const deleteItemApi = (id: string, token: string) => async (dispatch: any) => {
+    try {
+        const config = {
+            headers: {
+                'access-token': token
+            },
+        };
+        let response = await deleteApi(`items/${id}`, config);
+
+        if (response) {
+            dispatch(getAllItemsApi(response))
+        }
+    } catch (error) {
+
+    }
+}
+export { createItemApi, getAllItemsApi, deleteItemApi };
 
