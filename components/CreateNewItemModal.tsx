@@ -1,16 +1,16 @@
-import {Picker} from '@react-native-picker/picker';
-import {Button, Input, Text} from 'galio-framework';
-import React, {useEffect, useState} from 'react';
-import {Modal, StyleSheet, View, Switch} from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {useDispatch, useSelector} from 'react-redux';
-import {colors} from '../constants/colors';
-import {ModalProps} from '../constants/types';
-import {createPostApi} from '../redux/actions/post.actions';
-import {GlobalStyles} from '../styles/global';
-const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
-  const {editList} = useSelector((state: any) => state.category);
-  const {token} = useSelector(({auth}: any) => auth);
+import { Picker } from '@react-native-picker/picker';
+import { Button, Input, Text } from 'galio-framework';
+import React, { useEffect, useState } from 'react';
+import { Modal, StyleSheet, View, Switch, Alert } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { useDispatch, useSelector } from 'react-redux';
+import { colors } from '../constants/colors';
+import { ModalProps } from '../constants/types';
+import { createPostApi } from '../redux/actions/post.actions';
+import { GlobalStyles } from '../styles/global';
+const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
+  const { editList } = useSelector((state: any) => state.category);
+  const { token } = useSelector(({ auth }: any) => auth);
   const [libraryImageList, setImageLibraryList] = useState<any[]>([]);
   const [cameraImageList, setCameraImageList] = useState<any[]>([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('-1');
@@ -36,18 +36,45 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
         name: img.fileName,
       })),
     ];
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('category', selectedCategory);
-    formData.append('subCategory', selectedSubCategory);
-    formData.append('isLost', isLost);
-    mappedImages.forEach(img => {
-      formData.append('photos', img);
-    });
-    //@ts-ignore
-    dispatch(createPostApi(token, formData, isLost));
-    handleClose();
+    if (
+      title == '' ||
+      description == '' ||
+      selectedCategory == '-1' ||
+      selectedSubCategory == '-1' ||
+      mappedImages.length == 0
+
+    ) {
+      Alert.alert(
+        'Champs obligatoire',
+        'Vous devez remplir tous les champs et inclus des images',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              'Ok Pressed..';
+            },
+          },
+        ],
+      );
+    } else {
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('category', selectedCategory);
+      formData.append('subCategory', selectedSubCategory);
+      formData.append('isLost', isLost);
+      mappedImages.forEach(img => {
+        formData.append('photos', img);
+      });
+      //@ts-ignore
+      dispatch(createPostApi(token, formData, isLost));
+      handleClose();
+      setDescription('');
+      setTitle('');
+      setCameraImageList([]);
+      setImageLibraryList([]);
+    }
   };
 
   return (
@@ -109,7 +136,7 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
             />
             <View style={styles.categoryInput}>
               <Picker
-                style={{width: '100%', height: 30}}
+                style={{ width: '100%', height: 30 }}
                 selectedValue={selectedCategory}
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedCategory(itemValue);
@@ -131,7 +158,7 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
             </View>
             <View style={styles.categoryInput}>
               <Picker
-                style={{width: '100%', height: 30}}
+                style={{ width: '100%', height: 30 }}
                 selectedValue={selectedSubCategory}
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedSubCategory(itemValue);
@@ -156,11 +183,11 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
                 gap: 10,
                 marginVertical: 20,
               }}>
-              <Text style={{fontSize: 17, fontWeight: 500}}>
+              <Text style={{ fontSize: 17, fontWeight: 500 }}>
                 Element Perdu ? :{' '}
               </Text>
               <Switch
-                trackColor={{false: '#767577', true: colors.main}}
+                trackColor={{ false: '#767577', true: colors.main }}
                 thumbColor={isLost ? colors.hover : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={value => setIsLost(value)}
@@ -176,7 +203,7 @@ const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
                   setTitle('');
                   setCameraImageList([]);
                   setImageLibraryList([]);
-                  
+
                   handleClose();
                 }}>
                 Annuler
