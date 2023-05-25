@@ -1,40 +1,48 @@
-import { Card, Input } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
+import {Card, Input} from 'galio-framework';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
-  View, Alert
+  View,
+  Alert,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import EditItemModal from '../../components/EditItemModal';
 import MainHeader from '../../components/MainHeader';
-import { ScreenProps } from '../../constants/types';
-import { SET_SELECTED_POST } from '../../redux/actions/actionTypes';
-import { deletePostApi, getAllPostsByUser } from '../../redux/actions/post.actions';
-import { GlobalStyles } from '../../styles/global';
+import {ScreenProps} from '../../constants/types';
+import {SET_SELECTED_POST} from '../../redux/actions/actionTypes';
+import {
+  deletePostApi,
+  getAllPostsByUser,
+} from '../../redux/actions/post.actions';
+import {GlobalStyles} from '../../styles/global';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { stringMd5 } from 'react-native-quick-md5';
-const MyItems = ({ navigation }: ScreenProps) => {
+import {stringMd5} from 'react-native-quick-md5';
+import {useIsFocused} from '@react-navigation/native';
+const MyItems = ({navigation}: ScreenProps) => {
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+  const isFocused = useIsFocused();
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
-  const { editList, selectedPost } = useSelector((state: any) => state.posts);
-  const { token } = useSelector(({ auth }: any) => auth);
+  const {editList, selectedPost} = useSelector((state: any) => state.posts);
+  const {token} = useSelector(({auth}: any) => auth);
   const [itemsIndex, setItemsIndex] = useState(1);
   useEffect(() => {
-    //@ts-ignore
-    dispatch(getAllPostsByUser(token));
-  }, [token]);
+    if (isFocused) {
+      //@ts-ignore
+      dispatch(getAllPostsByUser(token));
+    }
+  }, [token, isFocused]);
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Mes Publications'} navigation={navigation} />
       <AwesomeAlert
         show={showAlert}
         showProgress={false}
-        title={selectedPost ? selectedPost.title : ""}
-        message={selectedPost ? selectedPost.description : ""}
+        title={selectedPost ? selectedPost.title : ''}
+        message={selectedPost ? selectedPost.description : ''}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -48,23 +56,26 @@ const MyItems = ({ navigation }: ScreenProps) => {
         }}
         onConfirmPressed={() => {
           if (selectedPost) {
-            Alert.alert('Confirmation', 'Est ce que vous etes sure de supprimer cette annonce', [
-              {
-                text: 'Non',
-                onPress: () => {
-                  console.log("Annuler")
+            Alert.alert(
+              'Confirmation',
+              'Est ce que vous etes sure de supprimer cette annonce',
+              [
+                {
+                  text: 'Non',
+                  onPress: () => {
+                    console.log('Annuler');
+                  },
+                  style: 'cancel',
                 },
-                style: 'cancel',
-              },
-              {
-                text: 'Oui', onPress: () => {
-                  //@ts-ignore
-                  dispatch(deletePostApi(token, selectedPost._id))
-                }
-              },
-            ]);
-
-
+                {
+                  text: 'Oui',
+                  onPress: () => {
+                    //@ts-ignore
+                    dispatch(deletePostApi(token, selectedPost._id));
+                  },
+                },
+              ],
+            );
           }
           setShowAlert(false);
         }}
@@ -91,7 +102,7 @@ const MyItems = ({ navigation }: ScreenProps) => {
               return elm;
             }
           })}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <TouchableOpacity
               onPress={() => {
                 //navigation.navigate('details');
@@ -108,7 +119,9 @@ const MyItems = ({ navigation }: ScreenProps) => {
                 title={item.title}
                 caption={`${item.createdBy.firstName} ${item.createdBy.lastName}`}
                 location={item.createdBy.address}
-                avatar={`https://www.gravatar.com/avatar/${stringMd5(item.createdBy.email)}&d=identicon`}
+                avatar={`https://www.gravatar.com/avatar/${stringMd5(
+                  item.createdBy.email,
+                )}&d=identicon`}
                 imageStyle={styles.cardImageRadius}
                 image={`${item.photos[0]}`}
               />

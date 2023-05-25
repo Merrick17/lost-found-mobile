@@ -81,14 +81,14 @@ const Login = ({ navigation }: ScreenProps) => {
                 </Text>
             )}
 
-            <View style={styles.forgotPass}>
+            {/* <View style={styles.forgotPass}>
                 <Text>Mot de passe oublie ? </Text>
                 <TouchableOpacity>
                     <Text bold color={colors.main}>
                         Cliquez ici
                     </Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
             <Button
                 color={colors.main}
                 shadowless

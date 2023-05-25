@@ -3,7 +3,7 @@ import {GET_CONVERSATION_LIST, SET_SELECTED_CONVERSATION} from './actionTypes';
 
 const createConversationApi =
   (token: string, body: any, userId: string) => async (dispatch: any) => {
-    console.log("Body",body); 
+    console.log('Body', body);
     try {
       const config = {
         headers: {
@@ -11,7 +11,7 @@ const createConversationApi =
         },
       };
       let result = await postApi('conversations', body, config);
-      console.log("Result",result); 
+      console.log('Result', result);
       dispatch(setSelectedConversation(result));
       dispatch(getAllConversationsApi(token, userId));
     } catch (error) {
@@ -77,10 +77,24 @@ const setSelectedConversation = (data: any) => {
     payload: data,
   };
 };
+const getConversationByIdApi =
+  (id: string, token: string) => async (dispatch: any) => {
+    try {
+      const config = {
+        headers: {
+          'access-token': token,
+        },
+      };
+      const response = await getApi(`conversations/conv/${id}`, config);
+      if (response) {
+        dispatch(setSelectedConversation(response));
+      }
+    } catch (error) {}
+  };
 export {
   createConversationApi,
   getAllConversationsApi,
   createMessageApi,
   updateCoversationApi,
-  setSelectedConversation,
+  setSelectedConversation,getConversationByIdApi
 };

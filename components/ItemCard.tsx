@@ -1,106 +1,116 @@
-import { Button } from 'galio-framework';
+import {Button} from 'galio-framework';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '../constants/colors';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteItemApi } from '../redux/actions/item.actions';
+import {StyleSheet, Text, View} from 'react-native';
+import {colors} from '../constants/colors';
+import {useDispatch, useSelector} from 'react-redux';
+import {deleteItemApi} from '../redux/actions/item.actions';
 
 type ItemCardType = {
-    title: string;
-    description: string;
-    id: string;
-    createdAt: string;
-    photos: string[];
-    ind: number;
+  title: string;
+  description: string;
+  id: string;
+  createdAt: string;
+  photos: string[];
+  ind: number;
+  onSendClick: () => void;
 };
 const ItemCard = ({
-    title,
-    description,
-    id,
-    createdAt,
-    photos,
-    ind,
+  title,
+  description,
+  id,
+  createdAt,
+  photos,
+  ind,
+  onSendClick,
 }: ItemCardType) => {
-    const dispatch = useDispatch();
-    const { token } = useSelector((state: any) => state.auth)
-    const handleDelete = () => {
-        //@ts-ignore
-        dispatch(deleteItemApi(id, token))
-    }
-    return (
-        <View style={styles.card}>
-            <View style={styles.itemCounter}>
-                <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 20 }}>
-                    {ind}
-                </Text>
-            </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "80%" }}>
-                <View>
-                    <Text style={{ fontWeight: '700', fontSize: 20 }}>{title}</Text>
-                    <Text style={{ fontWeight: '500', fontSize: 14 }}>{description}</Text>
-                </View>
-                <View style={styles.itemButtons}>
-                    <Button onPress={handleDelete}
-                        onlyIcon
-                        icon="delete"
-                        iconFamily="antdesign"
-                        iconSize={20}
-                        color="red"
-                        iconColor="#fff"
-                        style={{ width: 40, height: 40 }}>
-                        warning
-                    </Button>
-                    <Button
-                        onlyIcon
-                        icon="tags"
-                        iconFamily="antdesign"
-                        iconSize={30}
-                        color={colors.main}
-                        iconColor="#fff"
-
-                        style={{ width: 40, height: 40 }}>
-                        warning
-                    </Button>
-                </View>
-            </View>
+  const dispatch = useDispatch();
+  const {token} = useSelector((state: any) => state.auth);
+  const handleDelete = () => {
+    //@ts-ignore
+    dispatch(deleteItemApi(id, token));
+  };
+  const handleCreatePost = () => {};
+  return (
+    <View style={styles.card}>
+      <View style={styles.itemCounter}>
+        <Text style={{color: '#FFF', fontWeight: '700', fontSize: 20}}>
+          {ind}
+        </Text>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '80%',
+        }}>
+        <View>
+          <Text style={{fontWeight: '700', fontSize: 20}}>{title}</Text>
+          <Text style={{fontWeight: '500', fontSize: 14}}>{description}</Text>
         </View>
-    );
+        <View style={styles.itemButtons}>
+          <Button
+            onPress={handleDelete}
+            onlyIcon
+            icon="delete"
+            iconFamily="antdesign"
+            iconSize={20}
+            color="red"
+            iconColor="#fff"
+            style={{width: 40, height: 40}}>
+            warning
+          </Button>
+          <Button
+            onPress={onSendClick}
+            onlyIcon
+            icon="tags"
+            iconFamily="antdesign"
+            iconSize={30}
+            color={colors.main}
+            iconColor="#fff"
+            style={{width: 40, height: 40}}>
+            warning
+          </Button>
+        </View>
+      </View>
+    </View>
+  );
 };
 
 export default ItemCard;
 
 const styles = StyleSheet.create({
-    card: {
-        width: '100%',
-        height: 70,
-        padding: 5,
-        marginVertical: 10,
-        backgroundColor: colors.input,
-        elevation: 1,
-        borderRadius: 20,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: 20,
+  card: {
+    width: '100%',
+    height: 70,
+    padding: 5,
+    marginVertical: 10,
+    backgroundColor: colors.input,
+    elevation: 1,
+    borderRadius: 20,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 20,
 
-        borderColor: colors.hover,
-    },
-    cardImageRadius: {
-        height: '78%',
-        width: '30%',
-        resizeMode: 'contain',
-    },
-    itemCounter: {
-        backgroundColor: colors.main,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 50,
-        height: 50,
-        borderRadius: 50,
-    },
-    itemButtons: {
-        alignSelf: 'flex-end',
-        flexDirection: 'row',
-        paddingHorizontal: 10
-    },
+    borderColor: colors.hover,
+  },
+  cardImageRadius: {
+    height: '78%',
+    width: '30%',
+    resizeMode: 'contain',
+  },
+  itemCounter: {
+    backgroundColor: colors.main,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+  },
+  itemButtons: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+  },
 });

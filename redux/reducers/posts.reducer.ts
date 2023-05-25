@@ -16,13 +16,24 @@ const postReducer = (state = postInitState, action: any) => {
   switch (type) {
     case GET_POST_LIST:
       return {...state, baseList: payload, editList: payload};
-    case SEARCH_POST:
-      return state;
+
     case SET_SELECTED_POST:
       return {...state, selectedPost: payload};
 
     case SET_SELECTED_INDEX:
       return {...state, itemsIndex: payload};
+    case SEARCH_POST:
+      console.log('PAYLOAD', payload);
+      return {
+        ...state,
+        editList:
+          payload == ''
+            ? state.baseList
+            : state.baseList.filter((elm: any) => {
+                const regex = new RegExp(payload, 'i');
+                return regex.test(elm.title) || regex.test(elm.description);
+              }),
+      };
 
     default:
       return state;

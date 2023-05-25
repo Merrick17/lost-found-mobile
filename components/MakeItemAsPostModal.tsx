@@ -1,55 +1,48 @@
+import {Picker} from '@react-native-picker/picker';
 import {Button, Input, Text} from 'galio-framework';
-import React, {useState} from 'react';
-import {Modal, StyleSheet, View, Alert} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Modal, StyleSheet, View, Switch} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../constants/colors';
 import {ModalProps} from '../constants/types';
-import {createItemApi} from '../redux/actions/item.actions';
+import {createPostApi, createPostFromItem} from '../redux/actions/post.actions';
 import {GlobalStyles} from '../styles/global';
-const CreateNewUserItemModal = ({isOpen, handleClose}: ModalProps) => {
+const MakeItemAsPostModal = ({isOpen, handleClose}: ModalProps) => {
+  const {editList} = useSelector((state: any) => state.category);
   const {token} = useSelector(({auth}: any) => auth);
-  const [libraryImageList, setImageLibraryList] = useState<any[]>([]);
-  const [cameraImageList, setCameraImageList] = useState<any[]>([]);
+  const {selectedPost} = useSelector(({userItems}: any) => userItems);
 
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('-1');
+  const [selectedCategory, setSelectedCategory] = useState<string>('-1');
+  const [subCategoryList, setSubCategoryList] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [isLost, setIsLost] = useState(true);
   const dispatch = useDispatch();
-  const handleConfirm = () => {
-    if (title == '' || description == '') {
-      Alert.alert('Champs obligatoir', 'Vous devez remplir tous les champs', [
-        {
-          text: 'OK',
-          onPress: () => {
-            console.log('Pressed');
-          },
-        },
-      ]);
-    } else {
-      const mappedImages = [
-        ...cameraImageList.map(img => ({
-          uri: img.uri,
-          type: img.type,
-          name: img.fileName,
-        })),
-        ...libraryImageList.map(img => ({
-          uri: img.uri,
-          type: img.type,
-          name: img.fileName,
-        })),
-      ];
-      const formData = new FormData();
-      formData.append('name', title);
-      formData.append('description', description);
 
-      mappedImages.forEach(img => {
-        formData.append('photos', img);
-      });
-      //@ts-ignore
-      dispatch(createItemApi(token, formData));
+  const handleConfirm = () => {
+    if (selectedPost) {
+      dispatch(
+        createPostFromItem(
+          {
+            category: selectedCategory,
+            subCategory: selectedSubCategory,
+            itemId: selectedPost._id,
+          },
+          token,
+        ),
+      );
       handleClose();
     }
   };
+  useEffect(() => {
+    console.log('Selected Post', selectedPost);
+    if (selectedPost) {
+      setTitle(selectedPost.name);
+      setDescription(selectedPost.description);
+    }
+  }, [selectedPost]);
 
   return (
     <>
@@ -63,39 +56,8 @@ const CreateNewUserItemModal = ({isOpen, handleClose}: ModalProps) => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Ajouter nouveau element de valeurs
-            </Text>
-            <View style={styles.imageContainer}>
-              <Button
-                onlyIcon
-                color={colors.main}
-                icon="camera"
-                iconFamily="Entypo"
-                onPress={async () => {
-                  const options: any = {
-                    saveToPhotos: true,
-                  };
-                  const result = await launchCamera(options);
-                  //@ts-ignore
-                  setCameraImageList(result.assets);
-                }}
-              />
-              <Button
-                onlyIcon
-                color={colors.main}
-                icon="attachment"
-                iconFamily="Entypo"
-                onPress={async () => {
-                  const options: any = {
-                    saveToPhotos: true,
-                  };
-                  const result = await launchImageLibrary(options);
-                  //@ts-ignore
-                  setImageLibraryList(result.assets);
-                }}
-              />
-            </View>
+            <Text style={styles.modalText}>Convertir vers une publication</Text>
+
             <Input
               style={GlobalStyles.inputStyle}
               placeholder="Titre"
@@ -110,6 +72,66 @@ const CreateNewUserItemModal = ({isOpen, handleClose}: ModalProps) => {
               value={description}
               onChangeText={txt => setDescription(txt)}
             />
+            <View style={styles.categoryInput}>
+              <Picker
+                style={{width: '100%', height: 30}}
+                selectedValue={selectedCategory}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedCategory(itemValue);
+                  const subList = editList.find(
+                    (elm: any) => elm._id == itemValue,
+                  ).subCategories;
+                  setSubCategoryList(subList);
+                }}>
+                <Picker.Item label="Catégorie" value={'-1'} />
+                {editList &&
+                  editList.map((categ: any) => (
+                    <Picker.Item
+                      label={categ.name}
+                      value={categ._id}
+                      key={categ._id}
+                    />
+                  ))}
+              </Picker>
+            </View>
+            <View style={styles.categoryInput}>
+              <Picker
+                style={{width: '100%', height: 30}}
+                selectedValue={selectedSubCategory}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedSubCategory(itemValue);
+                }}>
+                <Picker.Item label="Sous Catégorie" value={'-1'} />
+                {subCategoryList &&
+                  subCategoryList.map((categ: any) => (
+                    <Picker.Item
+                      label={categ.name}
+                      value={categ._id}
+                      key={categ._id}
+                    />
+                  ))}
+              </Picker>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 10,
+                marginVertical: 20,
+              }}>
+              <Text style={{fontSize: 17, fontWeight: 500}}>
+                Element Perdu ? :{' '}
+              </Text>
+              <Switch
+                trackColor={{false: '#767577', true: colors.main}}
+                thumbColor={isLost ? colors.hover : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={value => setIsLost(value)}
+                value={isLost}
+              />
+            </View>
 
             <View style={styles.modalBottom}>
               <Button size={'small'} onPress={() => handleClose()}>
@@ -129,7 +151,7 @@ const CreateNewUserItemModal = ({isOpen, handleClose}: ModalProps) => {
   );
 };
 
-export default CreateNewUserItemModal;
+export default MakeItemAsPostModal;
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -137,7 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: 22,
-    height: 300,
+    height: 500,
   },
   modalView: {
     margin: 20,
@@ -155,7 +177,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     justifyContent: 'flex-start',
-    height: 400,
+    height: 600,
   },
   button: {
     borderRadius: 20,

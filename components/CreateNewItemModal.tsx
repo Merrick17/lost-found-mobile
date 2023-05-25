@@ -1,16 +1,16 @@
-import { Picker } from '@react-native-picker/picker';
-import { Button, Input, Text } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, View, Switch } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { useDispatch, useSelector } from 'react-redux';
-import { colors } from '../constants/colors';
-import { ModalProps } from '../constants/types';
-import { createPostApi } from '../redux/actions/post.actions';
-import { GlobalStyles } from '../styles/global';
-const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
-  const { editList } = useSelector((state: any) => state.category);
-  const { token } = useSelector(({ auth }: any) => auth);
+import {Picker} from '@react-native-picker/picker';
+import {Button, Input, Text} from 'galio-framework';
+import React, {useEffect, useState} from 'react';
+import {Modal, StyleSheet, View, Switch} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {useDispatch, useSelector} from 'react-redux';
+import {colors} from '../constants/colors';
+import {ModalProps} from '../constants/types';
+import {createPostApi} from '../redux/actions/post.actions';
+import {GlobalStyles} from '../styles/global';
+const CreateNewItemModal = ({isOpen, handleClose}: ModalProps) => {
+  const {editList} = useSelector((state: any) => state.category);
+  const {token} = useSelector(({auth}: any) => auth);
   const [libraryImageList, setImageLibraryList] = useState<any[]>([]);
   const [cameraImageList, setCameraImageList] = useState<any[]>([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('-1');
@@ -21,8 +21,8 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
   const [isLost, setIsLost] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("EDIT LIST", editList)
-  }, [editList])
+    console.log('EDIT LIST', editList);
+  }, [editList]);
   const handleConfirm = () => {
     const mappedImages = [
       ...cameraImageList.map(img => ({
@@ -41,7 +41,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
     formData.append('description', description);
     formData.append('category', selectedCategory);
     formData.append('subCategory', selectedSubCategory);
-    formData.append('isLost', isLost)
+    formData.append('isLost', isLost);
     mappedImages.forEach(img => {
       formData.append('photos', img);
     });
@@ -76,7 +76,6 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   const result = await launchCamera(options);
                   //@ts-ignore
                   setCameraImageList(result.assets);
-
                 }}
               />
               <Button
@@ -91,7 +90,6 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   const result = await launchImageLibrary(options);
                   //@ts-ignore
                   setImageLibraryList(result.assets);
-
                 }}
               />
             </View>
@@ -111,7 +109,7 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
             />
             <View style={styles.categoryInput}>
               <Picker
-                style={{ width: '100%', height: 30 }}
+                style={{width: '100%', height: 30}}
                 selectedValue={selectedCategory}
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedCategory(itemValue);
@@ -121,45 +119,66 @@ const CreateNewItemModal = ({ isOpen, handleClose }: ModalProps) => {
                   setSubCategoryList(subList);
                 }}>
                 <Picker.Item label="Catégorie" value={'-1'} />
-                {editList && editList.map((categ: any) => (
-                  <Picker.Item
-                    label={categ.name}
-                    value={categ._id}
-                    key={categ._id}
-                  />
-                ))}
+                {editList &&
+                  editList.map((categ: any) => (
+                    <Picker.Item
+                      label={categ.name}
+                      value={categ._id}
+                      key={categ._id}
+                    />
+                  ))}
               </Picker>
             </View>
             <View style={styles.categoryInput}>
               <Picker
-                style={{ width: '100%', height: 30 }}
+                style={{width: '100%', height: 30}}
                 selectedValue={selectedSubCategory}
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedSubCategory(itemValue);
                 }}>
                 <Picker.Item label="Sous Catégorie" value={'-1'} />
-                {subCategoryList && subCategoryList.map((categ: any) => (
-                  <Picker.Item
-                    label={categ.name}
-                    value={categ._id}
-                    key={categ._id}
-                  />
-                ))}
+                {subCategoryList &&
+                  subCategoryList.map((categ: any) => (
+                    <Picker.Item
+                      label={categ.name}
+                      value={categ._id}
+                      key={categ._id}
+                    />
+                  ))}
               </Picker>
             </View>
-            <View style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10, marginVertical: 20 }}>
-              <Text style={{ fontSize: 17, fontWeight: 500 }}>Element Perdu ? : </Text>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 10,
+                marginVertical: 20,
+              }}>
+              <Text style={{fontSize: 17, fontWeight: 500}}>
+                Element Perdu ? :{' '}
+              </Text>
               <Switch
-                trackColor={{ false: '#767577', true: colors.main }}
+                trackColor={{false: '#767577', true: colors.main}}
                 thumbColor={isLost ? colors.hover : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
-                onValueChange={(value) => setIsLost(value)}
+                onValueChange={value => setIsLost(value)}
                 value={isLost}
               />
             </View>
 
             <View style={styles.modalBottom}>
-              <Button size={'small'} onPress={() => handleClose()}>
+              <Button
+                size={'small'}
+                onPress={() => {
+                  setDescription('');
+                  setTitle('');
+                  setCameraImageList([]);
+                  setImageLibraryList([]);
+                  
+                  handleClose();
+                }}>
                 Annuler
               </Button>
               <Button

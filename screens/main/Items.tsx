@@ -1,5 +1,5 @@
-import { Button, Card, Input, Text } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
+import {Button, Card, Input, Text} from 'galio-framework';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,27 +7,43 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
-import { colors } from '../../constants/colors';
-import { ScreenProps } from '../../constants/types';
-import { SET_SELECTED_INDEX, SET_SELECTED_POST } from '../../redux/actions/actionTypes';
-import { getAllPostsApi } from '../../redux/actions/post.actions';
-import { GlobalStyles } from '../../styles/global';
-import { stringMd5 } from 'react-native-quick-md5';
+import {colors} from '../../constants/colors';
+import {ScreenProps} from '../../constants/types';
+import {
+  SEARCH_POST,
+  SEARCH_USER,
+  SET_SELECTED_INDEX,
+  SET_SELECTED_POST,
+} from '../../redux/actions/actionTypes';
+import {getAllPostsApi} from '../../redux/actions/post.actions';
+import {GlobalStyles} from '../../styles/global';
+import {stringMd5} from 'react-native-quick-md5';
+import {useIsFocused} from '@react-navigation/native';
+import moment from 'moment';
 //@ts-ignore
-const Items = ({ navigation }: ScreenProps) => {
+const Items = ({navigation}: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const { editList, itemsIndex } = useSelector((state: any) => state.posts);
-  const { token } = useSelector(({ auth }: any) => auth);
+  const {editList, itemsIndex} = useSelector((state: any) => state.posts);
+  const [search, setSearch] = useState<string>('');
+  const {token} = useSelector(({auth}: any) => auth);
+  const isFocused = useIsFocused();
   //const [itemsIndex, setItemsIndex] = useState(1);
   useEffect(() => {
-    //@ts-ignore
-    dispatch(getAllPostsApi(token));
-  }, [token]);
-
+    if (isFocused) {
+      //@ts-ignore
+      dispatch(getAllPostsApi(token));
+    }
+  }, [token, isFocused]);
+  useEffect(() => {
+    dispatch({
+      type: SEARCH_POST,
+      payload: search,
+    });
+  }, [search]);
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Publications'} navigation={navigation} />
@@ -45,8 +61,8 @@ const Items = ({ navigation }: ScreenProps) => {
           onPress={() => {
             dispatch({
               type: SET_SELECTED_INDEX,
-              payload: 1
-            })
+              payload: 1,
+            });
             //@ts-ignore
             dispatch(getAllPostsApi(token));
             //setItemsIndex(1);
@@ -58,8 +74,8 @@ const Items = ({ navigation }: ScreenProps) => {
           onPress={() => {
             dispatch({
               type: SET_SELECTED_INDEX,
-              payload: 2
-            })
+              payload: 2,
+            });
             //@ts-ignore
             dispatch(getAllPostsApi(token));
           }}>
@@ -80,6 +96,15 @@ const Items = ({ navigation }: ScreenProps) => {
           icon="search"
           family="Feather"
           placeholder="Recherche"
+          value={search}
+          onChangeText={val => {
+            //console.log("Value",val.target.toPrecision)
+            setSearch(val);
+            dispatch({
+              type: SEARCH_POST,
+              payload: val,
+            });
+          }}
         />
 
         <FlatList
@@ -91,7 +116,7 @@ const Items = ({ navigation }: ScreenProps) => {
               return elm;
             }
           })}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('details');
@@ -105,9 +130,14 @@ const Items = ({ navigation }: ScreenProps) => {
                 borderless
                 style={styles.card}
                 title={item.title}
-                caption={`${item.createdBy.firstName} ${item.createdBy.lastName}`}
-                location={item.createdBy.address}
-                avatar={`https://www.gravatar.com/avatar/${stringMd5(item.createdBy.email)}&d=identicon`}
+                caption={`${item.createdBy.firstName} ${
+                  item.createdBy.lastName
+                }                  ${moment(item.createdAt).format('DD/MM/YYYY')}  `}
+                // locationColor={'#FFF'}
+                // location={moment(item.createdAt).format('DD/MM/YYYY')}
+                avatar={`https://www.gravatar.com/avatar/${stringMd5(
+                  item.createdBy.email,
+                )}&d=identicon`}
                 imageStyle={styles.cardImageRadius}
                 image={`${item.photos[0]}`}
               />

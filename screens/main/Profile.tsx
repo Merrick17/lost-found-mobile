@@ -1,31 +1,44 @@
-import { Button, Text } from 'galio-framework';
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import {Button, Text} from 'galio-framework';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import CreateNewUserItemModal from '../../components/CreateNewUserItemModal';
 import ItemCard from '../../components/ItemCard';
 import MainHeader from '../../components/MainHeader';
-import { colors } from '../../constants/colors';
-import { GlobalStyles } from '../../styles/global';
-import { useDispatch, useSelector } from 'react-redux';
-import { getAllItemsApi } from '../../redux/actions/item.actions';
-import { FlatList } from 'react-native-gesture-handler';
+import {colors} from '../../constants/colors';
+import {GlobalStyles} from '../../styles/global';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllItemsApi} from '../../redux/actions/item.actions';
+import {FlatList} from 'react-native-gesture-handler';
 import UpdateUserModal from '../../components/UpdateUserModal';
+import MakeItemAsPostModal from '../../components/MakeItemAsPostModal';
+import {SET_SELECTED_ITEM} from '../../redux/actions/actionTypes';
 
-const Profile = ({ navigation }: { navigation: any }) => {
+const Profile = ({navigation}: {navigation: any}) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
-  const { token, user } = useSelector(({ auth }: any) => auth);
-  const { editList } = useSelector((state: any) => state.userItems);
+  const [isPostModalOpen, setIsPostModalOpen] = useState<boolean>(false);
+  const {token, user} = useSelector(({auth}: any) => auth);
+  const {editList} = useSelector((state: any) => state.userItems);
   const dispatch = useDispatch();
   useEffect(() => {
     ///@ts-ignore
-    dispatch(getAllItemsApi(token))
-  }, [])
+    dispatch(getAllItemsApi(token));
+  }, []);
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
       <MainHeader title={'Profil'} navigation={navigation} />
-      <CreateNewUserItemModal isOpen={isCreateOpen} handleClose={() => setIsCreateOpen(false)} />
-      <UpdateUserModal isOpen={isUpdateOpen} handleClose={() => setIsUpdateOpen(false)} />
+      <CreateNewUserItemModal
+        isOpen={isCreateOpen}
+        handleClose={() => setIsCreateOpen(false)}
+      />
+      <MakeItemAsPostModal
+        isOpen={isPostModalOpen}
+        handleClose={() => setIsPostModalOpen(false)}
+      />
+      <UpdateUserModal
+        isOpen={isUpdateOpen}
+        handleClose={() => setIsUpdateOpen(false)}
+      />
       <View style={GlobalStyles.container}>
         <View style={styles.userprofile}>
           <View style={styles.profileItem}>
@@ -45,13 +58,34 @@ const Profile = ({ navigation }: { navigation: any }) => {
             <Text>{user && user.phoneNumber}</Text>
           </View>
           <View style={styles.profileFooter}>
-            <Button color={colors.main} shadowless size={'small'} onPress={() => setIsUpdateOpen(true)}>
+            <Button
+              color={colors.main}
+              shadowless
+              size={'small'}
+              onPress={() => setIsUpdateOpen(true)}>
               Modifier
             </Button>
           </View>
         </View>
-        <Text style={styles.titleStyle}>Mes Valeurs</Text>
-        <FlatList data={editList} renderItem={({ item, index }) => <ItemCard title={item.name} description={item.description} id={item._id} createdAt={''} photos={[]} ind={index + 1} />} />
+        <Text style={styles.titleStyle}>Mes Articles</Text>
+        <FlatList
+          data={editList}
+          renderItem={({item, index}) => (
+            <ItemCard
+              title={item.name}
+              description={item.description}
+              id={item._id}
+              createdAt={''}
+              photos={[]}
+              ind={index + 1}
+              onSendClick={() => {
+                setIsPostModalOpen(true); 
+                dispatch({type: SET_SELECTED_ITEM, payload: item});
+              
+              }}
+            />
+          )}
+        />
         <Button
           onlyIcon
           size={'small'}

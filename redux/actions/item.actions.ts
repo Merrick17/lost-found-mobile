@@ -48,7 +48,7 @@ const deleteItemApi = (id: string, token: string) => async (dispatch: any) => {
         let response = await deleteApi(`items/${id}`, config);
 
         if (response) {
-            dispatch(getAllItemsApi(response))
+            dispatch(getAllItemsApi(token))
         }
     } catch (error) {
 

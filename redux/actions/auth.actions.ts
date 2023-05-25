@@ -12,7 +12,7 @@ const handleAuthApi =
         if (user.role == "USER") {
           await storeData(token, 'token');
           dispatch(handleAuthUser(token, userId, user));
-          navigation.navigate('Main');
+          navigation.replace('Main');
         } else {
           toast.show('Adresse ou email inconnu', {
             type: 'danger',
