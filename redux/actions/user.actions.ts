@@ -21,10 +21,17 @@ const getAllUsersApi = (token: string) => async (dispatch: any) => {
     dispatch(getAllUsers(result.result));
   }
 };
-const createUserApi = (body: any, token: string, toast: any) => async (dispatch: any) => {
+const createUserApi = (body: any, toast: any) => async (dispatch: any) => {
   let result = await postApi("users/create", body);
-  if (result) {
-    dispatch(getAllUsersApi(token));
+  console.log("REsult", result)
+  if (result && result.success) {
+    toast.show("Inscrption est fait avec succées", {
+      type: "success",
+      placement: "bottom",
+      duration: 4000,
+      offset: 30,
+      animationType: "zoom-in",
+    });
   } else {
     toast.show("Une erreur est servenu", {
       type: "danger",
@@ -44,7 +51,7 @@ const setUserDeviceId = async (deviceId: string, token: string) => {
     };
     const result = await postApi('users/deviceId', { deviceId: deviceId }, config);
     console.log("Result USer DEVICE ID", result)
-  } catch (error:any) {
+  } catch (error: any) {
     console.log("Result USer DEVICE ID", error.message)
   }
 }
@@ -71,4 +78,4 @@ const updateUserApi = (body: any, token: string, toast: any) => async (dispatch:
   }
 };
 
-export { getAllUsersApi, createUserApi, updateUserApi ,setUserDeviceId};
+export { getAllUsersApi, createUserApi, updateUserApi, setUserDeviceId };
