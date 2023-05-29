@@ -4,7 +4,9 @@ import { StyleSheet, View } from 'react-native';
 import { colors } from '../constants/colors';
 import { Text, Button } from 'galio-framework';
 import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 const DrawerContent = (props: any) => {
+    const nav = useNavigation();
     const { state } = props;
     const { routes, index } = state; //Not sure about the name of index property. Do check it out by logging the 'state' variable.
     const focusedRoute = routes[index];
@@ -49,7 +51,11 @@ const DrawerContent = (props: any) => {
             />
             <DrawerItem
                 label="Messages"
-                onPress={() => props.navigation.navigate('Messages')}
+                onPress={() => {
+                    // props.navigation.navigate('Messages'); 
+                    // nav.set
+                    nav.navigate('Messages', { screen: 'messageList' });
+                }}
                 focused={focusedRoute['name'] === 'Messages'}
             />
             <DrawerItem

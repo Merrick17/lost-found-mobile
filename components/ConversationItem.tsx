@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View ,Dimensions} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../constants/colors'
 import { Block, Icon } from 'galio-framework'
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         borderColor: '#ccc',
 
-        width: 360,
+        width: Dimensions.get('screen').width*0.9,
     },
     title: {
         fontSize: 18,

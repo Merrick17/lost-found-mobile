@@ -25,6 +25,7 @@ const Messages = ({navigation}: ScreenProps) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (isFocused) {
+      
       //@ts-ignore
       dispatch(getAllConversationsApi(token, user._id));
     }

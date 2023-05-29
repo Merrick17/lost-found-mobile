@@ -1,7 +1,7 @@
 import {Picker} from '@react-native-picker/picker';
 import {Button, Input, Text} from 'galio-framework';
 import React, {useEffect, useState} from 'react';
-import {Modal, StyleSheet, View, Switch} from 'react-native';
+import {Modal, StyleSheet, View, Switch, Alert} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../constants/colors';
@@ -23,16 +23,26 @@ const MakeItemAsPostModal = ({isOpen, handleClose}: ModalProps) => {
 
   const handleConfirm = () => {
     if (selectedPost) {
-      dispatch(
-        createPostFromItem(
-          {
-            category: selectedCategory,
-            subCategory: selectedSubCategory,
-            itemId: selectedPost._id,
-          },
-          token,
-        ),
-      );
+      if (selectedCategory == '-1' || selectedSubCategory == '-1') {
+        Alert.alert(
+          'Erreur',
+          'vous devez choisir une catégorie et une sous-catégorie',
+          [{text: 'Ok', onPress: () => {}}],
+        );
+      } else {
+        dispatch(
+          //@ts-ignore
+          createPostFromItem(
+            {
+              category: selectedCategory,
+              subCategory: selectedSubCategory,
+              itemId: selectedPost._id,
+            },
+            token,
+          ),
+        );
+      }
+
       handleClose();
     }
   };
