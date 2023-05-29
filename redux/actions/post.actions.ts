@@ -12,7 +12,9 @@ const createPostApi =
         },
       };
       let result = await postApi('annonce/create', body, config);
-      if (result && result.hasSimilair) {
+      console.log('RESULT CREATE', result);
+      if (result && result.hasSimilar) {
+        console.log("HERE")
         Alert.alert(
           'Attention',
           `Il ya des annonces avec cet element marqué comme ${
@@ -49,7 +51,7 @@ const createPostApi =
       } else {
         dispatch(getAllPostsApi(token));
       }
-      console.log('RESULT CREATE', result);
+   
     } catch (error) {
       console.log('Error', error);
     }

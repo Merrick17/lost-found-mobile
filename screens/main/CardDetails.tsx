@@ -1,22 +1,22 @@
-import {Button, Icon, Text} from 'galio-framework';
+import { Button, Icon, Text } from 'galio-framework';
 import React from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 //@ts-ignores
-import {useNavigation} from '@react-navigation/native';
-import {Linking} from 'react-native';
-import {SliderBox} from 'react-native-image-slider-box';
-import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { Linking } from 'react-native';
+import { SliderBox } from 'react-native-image-slider-box';
+import { useDispatch, useSelector } from 'react-redux';
 import MainHeader from '../../components/MainHeader';
-import {colors} from '../../constants/colors';
-import {ScreenProps} from '../../constants/types';
-import {createConversationApi} from '../../redux/actions/messsages.actions';
-import {GlobalStyles} from '../../styles/global';
-import {markPostAsFound} from '../../redux/actions/post.actions';
+import { colors } from '../../constants/colors';
+import { ScreenProps } from '../../constants/types';
+import { createConversationApi } from '../../redux/actions/messsages.actions';
+import { GlobalStyles } from '../../styles/global';
+import { markPostAsFound } from '../../redux/actions/post.actions';
 import moment from 'moment';
 //@ts-ignore
-const CardDetails = ({navigation}: ScreenProps) => {
-  const {selectedPost} = useSelector((state: any) => state.posts);
-  const {user, token} = useSelector(({auth}: any) => auth);
+const CardDetails = ({ navigation }: ScreenProps) => {
+  const { selectedPost } = useSelector((state: any) => state.posts);
+  const { user, token } = useSelector(({ auth }: any) => auth);
   const nav = useNavigation();
   const dispatch = useDispatch();
   const handleCreateConversation = () => {
@@ -24,17 +24,20 @@ const CardDetails = ({navigation}: ScreenProps) => {
     dispatch(
       createConversationApi(
         token,
-        {participants: [user._id, selectedPost.createdBy._id]},
+        { participants: [user._id, selectedPost.createdBy._id] },
         user._id,
       ),
     );
     //@ts-ignore
-    nav.navigate('Messages', {screen: 'conversation'});
+    nav.navigate('Messages', { screen: 'conversation' });
     //navigation.navigate('conversation')
   };
   const handleSendAlert = () => {
-    //@ts-ignore
-    dispatch(markPostAsFound(selectedPost._id, token));
+    if (selectedPost) { //@ts-ignore
+      dispatch(markPostAsFound(selectedPost._id, token));
+
+    }
+
   };
   return (
     <SafeAreaView style={GlobalStyles.mainContainerStyle}>
