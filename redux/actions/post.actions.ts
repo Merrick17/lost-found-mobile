@@ -1,6 +1,6 @@
-import {Alert} from 'react-native';
-import {deleteApi, getApi, postApi, updateApi} from '../../utils/apiMethods';
-import {GET_POST_LIST, SET_SELECTED_INDEX} from './actionTypes';
+import { Alert } from 'react-native';
+import { deleteApi, getApi, postApi, updateApi } from '../../utils/apiMethods';
+import { GET_POST_LIST, SET_SELECTED_INDEX } from './actionTypes';
 
 const createPostApi =
   (token: string, body: any, isLost: boolean) => async (dispatch: any) => {
@@ -17,20 +17,20 @@ const createPostApi =
         console.log("HERE")
         Alert.alert(
           'Attention',
-          `Il ya des annonces avec cet element marqué comme ${
-            isLost ? 'trouvé' : 'perdu'
+          `Il ya des annonces avec cet element marqué comme ${isLost ? 'trouvé' : 'perdu'
           }`,
           [
             {
               text: "Afficher l'existant",
               onPress: () => {
                 console.log('Cancel Pressed');
+                console.log("RESULT", result.result);
                 dispatch(getAllPosts(result.result));
                 console.log('IS LOST');
                 if (isLost) {
-                  dispatch({type: SET_SELECTED_INDEX, payload: 2});
+                  dispatch({ type: SET_SELECTED_INDEX, payload: 2 });
                 } else {
-                  dispatch({type: SET_SELECTED_INDEX, payload: 1});
+                  dispatch({ type: SET_SELECTED_INDEX, payload: 1 });
                 }
               },
               style: 'cancel',
@@ -51,7 +51,7 @@ const createPostApi =
       } else {
         dispatch(getAllPostsApi(token));
       }
-   
+
     } catch (error) {
       console.log('Error', error);
     }
@@ -81,7 +81,7 @@ const getAllPostsApi = (token: string) => async (dispatch: any) => {
     if (response && response.success) {
       dispatch(getAllPosts(response.result));
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 const getAllPosts = (data: any) => {
   return {
@@ -102,7 +102,7 @@ export const markPostAsFound =
       if (result) {
         dispatch(getAllPostsApi(token));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 const getAllPostsByUser = (token: string) => async (dispatch: any) => {
   try {
@@ -115,7 +115,7 @@ const getAllPostsByUser = (token: string) => async (dispatch: any) => {
     if (response && response.success) {
       dispatch(getAllPosts(response.result));
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 const deletePostApi =
   (token: string, postId: string) => async (dispatch: any) => {
@@ -129,9 +129,9 @@ const deletePostApi =
       if (response) {
         dispatch(getAllPostsByUser(token));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
- const createPostFromItem =
+const createPostFromItem =
   (body: any, token: string) => async (dispatch: any) => {
     try {
       const config = {
@@ -144,7 +144,7 @@ const deletePostApi =
       if (result) {
         dispatch(getAllPostsApi(token));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 export {
   createPostApi,

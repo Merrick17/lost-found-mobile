@@ -82,7 +82,10 @@ const CardDetails = ({ navigation }: ScreenProps) => {
             onlyIcon
             color="success"
             onPress={() => {
-              Linking.openURL(`tel:${selectedPost.createdBy.phoneNumber}`);
+              if (selectedPost.createdBy._id !== user._id) {
+                Linking.openURL(`tel:${selectedPost.createdBy.phoneNumber}`);
+              }
+
             }}
           />
 

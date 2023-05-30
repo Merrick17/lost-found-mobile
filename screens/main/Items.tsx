@@ -1,5 +1,5 @@
-import {Button, Card, Input, Text} from 'galio-framework';
-import React, {useEffect, useState} from 'react';
+import { Button, Card, Input, Text } from 'galio-framework';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,29 +7,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CreateNewItemModal from '../../components/CreateNewItemModal';
 import MainHeader from '../../components/MainHeader';
-import {colors} from '../../constants/colors';
-import {ScreenProps} from '../../constants/types';
+import { colors } from '../../constants/colors';
+import { ScreenProps } from '../../constants/types';
 import {
   SEARCH_POST,
   SEARCH_USER,
   SET_SELECTED_INDEX,
   SET_SELECTED_POST,
 } from '../../redux/actions/actionTypes';
-import {getAllPostsApi} from '../../redux/actions/post.actions';
-import {GlobalStyles} from '../../styles/global';
-import {stringMd5} from 'react-native-quick-md5';
-import {useIsFocused} from '@react-navigation/native';
+import { getAllPostsApi } from '../../redux/actions/post.actions';
+import { GlobalStyles } from '../../styles/global';
+import { stringMd5 } from 'react-native-quick-md5';
+import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 //@ts-ignore
-const Items = ({navigation}: ScreenProps) => {
+const Items = ({ navigation }: ScreenProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const {editList, itemsIndex} = useSelector((state: any) => state.posts);
+  const { editList, itemsIndex, searched } = useSelector((state: any) => state.posts);
   const [search, setSearch] = useState<string>('');
-  const {token} = useSelector(({auth}: any) => auth);
+  const { token } = useSelector(({ auth }: any) => auth);
   const isFocused = useIsFocused();
   //const [itemsIndex, setItemsIndex] = useState(1);
   useEffect(() => {
@@ -38,6 +38,9 @@ const Items = ({navigation}: ScreenProps) => {
       dispatch(getAllPostsApi(token));
     }
   }, [token, isFocused]);
+  useEffect(() => {
+    console.log("EDIT LIST", editList[0])
+  }, [itemsIndex])
   useEffect(() => {
     dispatch({
       type: SEARCH_POST,
@@ -110,13 +113,14 @@ const Items = ({navigation}: ScreenProps) => {
         <FlatList
           style={styles.scrollContainer}
           data={editList.filter((elm: any) => {
+            console.log("IS LOST ELEMENT", elm.isLost)
             if (itemsIndex == 1 && elm.isLost) {
               return elm;
             } else if (itemsIndex == 2 && !elm.isLost) {
               return elm;
             }
           })}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('details');
@@ -130,9 +134,8 @@ const Items = ({navigation}: ScreenProps) => {
                 borderless
                 style={styles.card}
                 title={item.title}
-                caption={`${item.createdBy.firstName} ${
-                  item.createdBy.lastName
-                }                  ${moment(item.createdAt).format('DD/MM/YYYY')}  `}
+                caption={`${item.createdBy.firstName} ${item.createdBy.lastName
+                  }                  ${moment(item.createdAt).format('DD/MM/YYYY')}  `}
                 // locationColor={'#FFF'}
                 // location={moment(item.createdAt).format('DD/MM/YYYY')}
                 avatar={`https://www.gravatar.com/avatar/${stringMd5(
